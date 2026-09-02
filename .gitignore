@@ -1,0 +1,42 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+.DS_Store
+dist
+dist-ssr
+coverage
+*.local
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+*.tsbuildinfo
+
+.eslintcache
+
+# Cypress
+/cypress/videos/
+/cypress/screenshots/
+
+# Vitest
+__screenshots__/
+
+# Vite
+*.timestamp-*-*.mjs
+/.npm-cache/_cacache/content-v2/sha512/54/92/83b77e03b0554e0fb4b833d04cf0444f3d1ca507ae6ea1b04ca13b1ce9274b7c0c6be0bdad50fc6b702199c9470799026ec8330a4f037d5645d46fbddbcd
+/.npm-cache/_cacache/content-v2/sha512/d3/ae/2658315f351e8800ae7e20f4c2208b2110bb6dd2dec9baab9227bca104963e592b2ccd07da81b61fabfe37ba484382bdf20017bc2e7cc51f6842986cf33d
+/.vscode/extensions.json
