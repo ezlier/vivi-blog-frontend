@@ -6,8 +6,11 @@ const AdminLayout = () => import("@/layouts/AdminLayout/index.vue");
 
 // 前台
 const HomeView = () => import("@/views/home/index.vue");
+const ArticleView = () => import("@/views/article/index.vue");
 const ArticleDetail = () => import("@/views/article-detail/index.vue");
+const EssayView = () => import("@/views/essay/index.vue");
 const ArchiveView = () => import("@/views/archive/index.vue");
+const MessageView = () => import("@/views/message/index.vue");
 const AboutView = () => import("@/views/about/index.vue");
 const LoginView = () => import("@/views/login/index.vue");
 
@@ -31,14 +34,25 @@ const routes: RouteRecordRaw[] = [
   // ── 前台 ──────────────────────────────────────────────────────
   {
     path: "/",
+    component: HomeView,
+  },
+  {
+    path: "/",
     component: FrontLayout,
     children: [
-      { path: "", redirect: "/home" },
       {
         path: "home",
         name: "Home",
         components: {
-          default: HomeView,
+          default: ArticleView,
+          sidebar: CommonSidebar,
+        },
+      },
+      {
+        path: "essay",
+        name: "Essay",
+        components: {
+          default: EssayView,
           sidebar: CommonSidebar,
         },
       },
@@ -55,6 +69,14 @@ const routes: RouteRecordRaw[] = [
         name: "Archive",
         components: {
           default: ArchiveView,
+          sidebar: CommonSidebar,
+        },
+      },
+      {
+        path: "message",
+        name: "Message",
+        components: {
+          default: MessageView,
           sidebar: CommonSidebar,
         },
       },
@@ -95,7 +117,7 @@ const routes: RouteRecordRaw[] = [
   },
 
   // ── 404 ───────────────────────────────────────────────────────
-  { path: "/:pathMatch(.*)*", redirect: "/home" },
+  { path: "/:pathMatch(.*)*", redirect: "/" },
 ];
 
 export default routes;

@@ -12,13 +12,21 @@
     <article class="article-body" v-html="html"></article>
 
     <div class="article-tags" v-if="article.tags?.length">
-      <span v-for="tag in article.tags" :key="typeof tag === 'string' ? tag : tag.id" class="article-tag">
-        {{ typeof tag === 'string' ? tag : tag.name }}
+      <span
+        v-for="tag in article.tags"
+        :key="typeof tag === 'string' ? tag : tag.id"
+        class="article-tag"
+      >
+        {{ typeof tag === "string" ? tag : tag.name }}
       </span>
     </div>
 
     <!-- 评论区 -->
-    <CommentSection title="评论" :comments="commentList" :on-submit="handleComment" />
+    <CommentSection
+      title="评论"
+      :comments="commentList"
+      :on-submit="handleComment"
+    />
   </div>
 
   <div v-else-if="loading" class="article-loading">
@@ -27,133 +35,154 @@
 </template>
 
 <script setup lang="ts">
-defineOptions({ name: 'ArticleDetail' })
+defineOptions({ name: "ArticleDetail" });
 
-import { ref, watch } from 'vue'
-import { useRoute } from 'vue-router'
-import { useArticleStore } from '@/stores/article'
-import { getComments, createComment } from '@/api/comment'
-import CommentSection from '@/components/CommentSection.vue'
+import { ref, watch } from "vue";
+import { useRoute } from "vue-router";
+import { useArticleStore } from "@/stores/article";
+import type { Article } from "@/stores/article";
+import { getComments, createComment } from "@/api/comment";
+import CommentSection from "@/components/CommentSection.vue";
 
-import MarkdownIt from 'markdown-it'
-import hljs from 'highlight.js'
-import 'highlight.js/styles/github-dark.css'
+import MarkdownIt from "markdown-it";
+import hljs from "highlight.js";
+import "highlight.js/styles/github-dark.css";
+import { createHeadingId } from "@/utils/markdownHeadings";
 
-const route = useRoute()
-const articleStore = useArticleStore()
-const article = ref<any>(null)
-const html = ref('')
-const loading = ref(true)
-const commentList = ref<any[]>([])
+const route = useRoute();
+const articleStore = useArticleStore();
+const article = ref<Article | null>(null);
+const html = ref("");
+const loading = ref(true);
+const commentList = ref<any[]>([]);
 
 const md = new MarkdownIt({
   html: true,
   linkify: true,
   typographer: true,
   highlight: function (str, lang) {
-    let html = ''
-    const linesLength = str.split(/\n/).length - 1
+    let html = "";
+    const linesLength = str.split(/\n/).length - 1;
     // 生成行号
-    let linesNum = '<span aria-hidden="true" class="line-numbers-rows">'
+    let linesNum = '<span aria-hidden="true" class="line-numbers-rows">';
     for (let index = 0; index < linesLength; index++) {
-      linesNum = linesNum + '<span></span>'
+      linesNum = linesNum + "<span></span>";
     }
-    linesNum += '</span>'
+    linesNum += "</span>";
     if (lang && hljs.getLanguage(lang)) {
       try {
         // highlight.js 高亮代码
-        const preCode = hljs.highlight(lang, str, true).value
-        html = html + preCode
+        const preCode = hljs.highlight(lang, str, true).value;
+        html = html + preCode;
 
         // 返回高亮后的代码
-        return `<pre class="hljs"><code>${html}</code>${linesNum}</pre>`
+        return `<pre class="hljs"><code>${html}</code>${linesNum}</pre>`;
       } catch (error) {
-        console.log(error)
+        console.log(error);
       }
     }
 
-    const preCode = md.utils.escapeHtml(str)
-    html = html + preCode
+    const preCode = md.utils.escapeHtml(str);
+    html = html + preCode;
     // 返回高亮后的代码
-    return `<pre class="hljs"><code>${html}</code>${linesNum}</pre>`
-  }
+    return `<pre class="hljs"><code>${html}</code>${linesNum}</pre>`;
+  },
+});
 
-})
-
-let h1Index = 0
+let headingIndex = 0;
+let h1Index = 0;
 md.renderer.rules.heading_open = function (tokens: any[], idx: number) {
-  const token = tokens[idx]
-  if (token.tag === 'h1') {
-    h1Index++
-    return `<h1><span class="h1-number">${h1Index}</span><span class="h1-text">`
+  const token = tokens[idx];
+  const inlineToken = tokens[idx + 1];
+  const rawText = inlineToken?.type === "inline" ? inlineToken.content : "";
+  const headingId = createHeadingId(rawText, headingIndex++);
+  const escapedHeadingId = md.utils.escapeHtml(headingId);
+
+  if (token.tag === "h1") {
+    h1Index++;
+    return `<h1 id="${escapedHeadingId}"><span class="h1-number">${h1Index}</span><span class="h1-text">`;
   }
-  return `<${token.tag}>`
-}
+  return `<${token.tag} id="${escapedHeadingId}">`;
+};
 
 md.renderer.rules.heading_close = function (tokens: any[], idx: number) {
-  const token = tokens[idx]
-  if (token.tag === 'h1') {
-    return '</span></h1>'
+  const token = tokens[idx];
+  if (token.tag === "h1") {
+    return "</span></h1>";
   }
-  return `</${token.tag}>`
-}
+  return `</${token.tag}>`;
+};
 
 async function load(slug: string) {
-  loading.value = true
-  h1Index = 0
+  loading.value = true;
+  headingIndex = 0;
+  h1Index = 0;
   try {
-    const data = await articleStore.fetchArticle(slug)
-    article.value = data
-    html.value = data.content ? md.render(data.content) : ''
-    await fetchComments(slug)
+    const data = await articleStore.fetchArticle(slug);
+    article.value = data;
+    html.value = data.content ? md.render(data.content) : "";
+    await fetchComments(slug);
   } finally {
-    loading.value = false
+    loading.value = false;
   }
 }
 
 async function fetchComments(slug: string) {
   try {
-    const res = await getComments(slug)
-    const payload = res.data.data.comments
-    commentList.value = payload.items.map((comment: {
-      id: number
-      nickname: string
-      content: string
-      created_at: string
-    }) => ({
-      id: comment.id,
-      name: comment.nickname,
-      text: comment.content,
-      time: comment.created_at,
-    }))
+    const res = await getComments(slug);
+    const payload = res.data.data.comments;
+    commentList.value = payload.items.map(
+      (comment: {
+        id: number;
+        nickname: string;
+        content: string;
+        created_at: string;
+      }) => ({
+        id: comment.id,
+        name: comment.nickname,
+        text: comment.content,
+        time: comment.created_at,
+      }),
+    );
   } catch {
-    commentList.value = []
+    commentList.value = [];
   }
 }
 
-async function handleComment(data: { name: string; text: string; QQ?: string; email?: string }) {
-  const slug = route.params.slug as string
-  await createComment(slug, data as any)
-  await fetchComments(slug)
+async function handleComment(data: {
+  name: string;
+  text: string;
+  QQ?: string;
+  email?: string;
+}) {
+  const slug = route.params.slug as string;
+  await createComment(slug, data as any);
+  await fetchComments(slug);
 }
 
 // 首次加载
-const initialSlug = route.params.slug as string
+const initialSlug = route.params.slug as string;
 if (initialSlug) {
-  load(initialSlug)
+  load(initialSlug);
 }
 
 // 路由参数变化时重新加载
-watch(() => route.params.slug, (newSlug) => {
-  if (newSlug) {
-    load(newSlug as string)
-  }
-})
+watch(
+  () => route.params.slug,
+  (newSlug) => {
+    if (newSlug) {
+      load(newSlug as string);
+    }
+  },
+);
 </script>
 
 <style scoped>
 .article-detail {
   width: 100%;
+  background-color: var(--color-background);
+  border-radius: var(--border-radius-xs);
+  padding: 20px;
 }
 
 .article-cover {
@@ -229,15 +258,15 @@ watch(() => route.params.slug, (newSlug) => {
   animation: spin 0.7s linear infinite;
 }
 
-::v-deep .markdown-body {
+:deep(.markdown-body) {
   font-family: 文楷;
 }
 
-::v-deep .markdown-body h1 {
+:deep(.markdown-body h1) {
   text-decoration: none !important;
 }
 
-::v-deep .h1-number {
+:deep(.h1-number) {
   color: var(--text-color);
   font-size: 60px;
   text-decoration: none !important;
@@ -245,18 +274,18 @@ watch(() => route.params.slug, (newSlug) => {
   font-style: italic;
 }
 
-::v-deep .h1-text {
+:deep(.h1-text) {
   color: var(--text-color);
   font-size: 20px;
   text-decoration: underline;
   text-underline-offset: 4px;
 }
 
-::v-deep .markdown-body img {
+:deep(.markdown-body img) {
   width: 100%;
 }
 
-::v-deep .markdown-body code {
+:deep(.markdown-body code) {
   background-color: #2c2c2e;
   padding: 0 5px;
   border-radius: 6px;
@@ -265,7 +294,7 @@ watch(() => route.params.slug, (newSlug) => {
 }
 
 /* 代码块样式 */
-::v-deep pre.hljs {
+:deep(pre.hljs) {
   padding: 12px 2px 12px 40px !important;
   border-radius: 5px !important;
   position: relative;
@@ -291,7 +320,7 @@ watch(() => route.params.slug, (newSlug) => {
     width: 40px;
     text-align: center;
     letter-spacing: -1px;
-    border-right: 1px solid rgba(0, 0, 0, .66);
+    border-right: 1px solid rgba(0, 0, 0, 0.66);
     user-select: none;
     counter-reset: linenumber;
 
@@ -333,9 +362,7 @@ watch(() => route.params.slug, (newSlug) => {
   }
 }
 
-
-
-::v-deep .article-body pre {
+:deep(.article-body pre) {
   position: relative;
   background-color: #272822;
   /* color: #d4d4d4; */
@@ -349,7 +376,7 @@ watch(() => route.params.slug, (newSlug) => {
 }
 
 /* 顶部语言标签 */
-::v-deep .article-body pre::before {
+:deep(.article-body pre::before) {
   content: attr(data-lang);
   position: absolute;
   top: 3px;
@@ -359,7 +386,7 @@ watch(() => route.params.slug, (newSlug) => {
   font-family: sans-serif;
 }
 
-::v-deep .article-body pre::after {
+:deep(.article-body pre::after) {
   content: "● ● ●";
   position: absolute;
   top: 6px;
@@ -372,7 +399,7 @@ watch(() => route.params.slug, (newSlug) => {
 }
 
 /* 内部代码文本 */
-::v-deep .article-body pre code {
+:deep(.article-body pre code) {
   background: none !important;
   padding-top: 10px;
   font-family: "Fira Code", Consolas, monospace;
@@ -383,7 +410,7 @@ watch(() => route.params.slug, (newSlug) => {
 }
 
 /* 代码块内注释样式 */
-::v-deep .article-body pre code .hljs-comment {
+:deep(.article-body pre code .hljs-comment) {
   font-family: "LXGW WenKai Mono", "Source Han Serif SC", "SimSun", monospace;
   color: #7d7d7d;
   font-size: 1em;
@@ -392,7 +419,7 @@ watch(() => route.params.slug, (newSlug) => {
 }
 
 /* ---------- 表格整体样式 ---------- */
-::v-deep .article-body table {
+:deep(.article-body table) {
   width: 100%;
   overflow-x: auto;
   border-collapse: collapse;
@@ -404,7 +431,7 @@ watch(() => route.params.slug, (newSlug) => {
 }
 
 /* 表头 */
-::v-deep .article-body thead {
+:deep(.article-body thead) {
   background-color: #fcbad3;
   color: #333;
   text-align: left;
@@ -412,23 +439,21 @@ watch(() => route.params.slug, (newSlug) => {
 }
 
 /* 单元格 */
-::v-deep .article-body th,
-::v-deep .article-body td {
+:deep(.article-body th),
+:deep(.article-body td) {
   padding: 12px 16px;
   border: 1px solid #e0e0e0;
   line-height: 1.6;
 }
 
-
-
 /* hover 高亮 */
-::v-deep .article-body tbody tr:hover {
+:deep(.article-body tbody tr:hover) {
   background-color: rgba(142, 140, 216, 0.1);
   transition: background 0.2s ease;
 }
 
 /* 单元格内代码 */
-::v-deep .article-body td code {
+:deep(.article-body td code) {
   background: rgba(175, 184, 193, 0.15);
   padding: 2px 4px;
   border-radius: 3px;
@@ -437,35 +462,34 @@ watch(() => route.params.slug, (newSlug) => {
 }
 
 /* ---------- 暗色模式适配 ---------- */
-::v-deep .dark .article-body table {
+:deep(.dark .article-body table) {
   background-color: #1e1e1e;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
 }
 
-::v-deep .dark .article-body thead {
+:deep(.dark .article-body thead) {
   background-color: #333;
   color: #fcbad3;
 }
 
-::v-deep .dark .article-body th,
-::v-deep .dark .article-body td {
+:deep(.dark .article-body th),
+:deep(.dark .article-body td) {
   border: 1px solid #444;
   color: #ddd;
 }
 
-::v-deep .dark .article-body tbody tr:nth-child(even) {
+:deep(.dark .article-body tbody tr:nth-child(even)) {
   background-color: #2a2a2a;
 }
 
-::v-deep .dark .article-body tbody tr:hover {
+:deep(.dark .article-body tbody tr:hover) {
   background-color: rgba(142, 140, 216, 0.2);
 }
 
-::v-deep .dark .article-body td code {
+:deep(.dark .article-body td code) {
   background: rgba(255, 255, 255, 0.1);
   color: #ff99cc;
 }
-
 
 .text-nofound {
   width: fit-content;
@@ -564,7 +588,7 @@ watch(() => route.params.slug, (newSlug) => {
 }
 
 @media (max-width: 768px) {
-  ::v-deep .article-body table {
+  :deep(.article-body table) {
     display: block;
     font-size: 0.85em;
   }

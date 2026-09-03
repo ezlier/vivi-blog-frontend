@@ -1,5 +1,5 @@
 <template>
-  <MdEditor :model-value="props.modelValue" @update:model-value="emit('update:modelValue', $event)" height="500px" />
+  <MdEditor :model-value="props.modelValue" @update:model-value="emit('update:modelValue', $event)" />
 </template>
 
 <script setup lang="ts">
@@ -65,7 +65,6 @@ function toggleFullscreen() {
   border: 1px solid var(--color-border, #dcdfe6);
   border-radius: 8px;
   overflow: hidden;
-  background: var(--color-background, #fff);
   display: flex;
   flex-direction: column;
 }

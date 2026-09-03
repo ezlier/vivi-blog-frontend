@@ -53,6 +53,9 @@ onMounted(async () => {
 <style scoped>
 .archive {
   width: 100%;
+  background-color: var(--color-background);
+  border-radius: var(--border-radius-xs);
+  padding: 20px;
 }
 
 .archive__loading {

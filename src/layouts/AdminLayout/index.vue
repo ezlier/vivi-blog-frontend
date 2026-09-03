@@ -8,11 +8,11 @@
         <RouterLink to="/admin/dashboard" active-class="active">📊 仪表盘</RouterLink>
 
         <div class="nav-dropdown" @mouseenter="showArticleMenu = true" @mouseleave="showArticleMenu = false">
-          <RouterLink to="/admin/articles" active-class="active" class="nav-dropdown-trigger">📝 文章管理 <span
-              class="arrow">▾</span></RouterLink>
+          <RouterLink to="/admin/articles" active-class="active" class="nav-dropdown-trigger">📝 文章管理
+            <span class="arrow">▾</span>
+          </RouterLink>
           <div v-show="showArticleMenu" class="nav-dropdown-menu">
             <RouterLink to="/admin/article/edit" active-class="active">✏️ 创建文章</RouterLink>
-            <RouterLink to="/admin/article/upload" active-class="active">📤 上传文章</RouterLink>
           </div>
         </div>
 

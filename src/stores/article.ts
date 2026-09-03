@@ -29,16 +29,18 @@ export const useArticleStore = defineStore("article", () => {
     }
   }
 
-  async function fetchArticle(slug: string) {
+  async function fetchArticle(slug: string): Promise<Article> {
     const res = await getArticle(slug);
     const data = res.data.data;
-    currentArticle.value = {
+    const article: Article = {
       ...data,
       created_time: data.created_at,
       updated_time: data.updated_at,
       like_count: data.like_count ?? 0,
     };
-    return currentArticle.value;
+
+    currentArticle.value = article;
+    return article;
   }
 
   async function fetchAllArticles() {

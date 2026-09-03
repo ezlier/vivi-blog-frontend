@@ -1,13 +1,15 @@
 <template>
   <div class="timeline-container">
-    <div v-for="group in groupedArticles" :key="group.year" class="timeline-year-block">
+    <div
+      v-for="group in groupedArticles"
+      :key="group.year"
+      class="timeline-year-block"
+    >
       <!-- 年份标题行 -->
       <div class="timeline-year-header">
         <div class="timeline-year">{{ group.year }}</div>
         <div class="timeline-dot-outline"></div>
-        <div class="timeline-year-count">
-          {{ group.posts.length }} 篇文章
-        </div>
+        <div class="timeline-year-count">{{ group.posts.length }} 篇文章</div>
       </div>
 
       <transition-group name="fade-slide" tag="div">
@@ -30,7 +32,7 @@
               :key="typeof tag === 'string' ? tag : tag.id"
               class="timeline-tag"
             >
-              {{ typeof tag === 'string' ? tag : tag.name }}
+              {{ typeof tag === "string" ? tag : tag.name }}
             </span>
           </div>
         </RouterLink>
@@ -40,35 +42,37 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
-import type { Article } from '@/stores/article'
+import { computed } from "vue";
+import type { Article } from "@/stores/article";
 
 const props = defineProps<{
-  articles: Article[]
-}>()
+  articles: Article[];
+}>();
 
 const groupedArticles = computed(() => {
-  const grouped: Record<string, Article[]> = {}
+  const grouped: Record<string, Article[]> = {};
   for (const article of props.articles) {
-    const year = new Date(article.created_time).getFullYear()
-    if (!grouped[year]) grouped[year] = []
-    grouped[year].push(article)
+    const year = new Date(article.created_time).getFullYear();
+    const posts = (grouped[year] ??= []);
+    posts.push(article);
   }
   return Object.keys(grouped)
     .sort((a, b) => Number(b) - Number(a))
     .map((year) => ({
       year: Number(year),
-      posts: grouped[year].sort(
-        (a, b) => new Date(b.created_time).getTime() - new Date(a.created_time).getTime()
+      posts: [...(grouped[year] ?? [])].sort(
+        (a, b) =>
+          new Date(b.created_time).getTime() -
+          new Date(a.created_time).getTime(),
       ),
-    }))
-})
+    }));
+});
 
 function formatDate(date: string) {
-  const d = new Date(date)
-  const m = (d.getMonth() + 1).toString().padStart(2, '0')
-  const day = d.getDate().toString().padStart(2, '0')
-  return `${m}-${day}`
+  const d = new Date(date);
+  const m = (d.getMonth() + 1).toString().padStart(2, "0");
+  const day = d.getDate().toString().padStart(2, "0");
+  return `${m}-${day}`;
 }
 </script>
 

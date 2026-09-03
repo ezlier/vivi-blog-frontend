@@ -1,74 +1,89 @@
 <script setup lang="ts">
-import { useUiStore } from "@/stores/ui"
-import { onMounted, ref } from 'vue'
-import MarkdownIt from "markdown-it"
-import hljs from "highlight.js"
-import "highlight.js/styles/github-dark.css"
-import { getMessages, createMessage } from '@/api/message'
-import CommentSection from '@/components/CommentSection.vue'
+import { useUiStore } from "@/stores/ui";
+import { onMounted, ref } from "vue";
+import MarkdownIt from "markdown-it";
+import hljs from "highlight.js";
+import "highlight.js/styles/github-dark.css";
+import { getMessages, createMessage } from "@/api/message";
+import CommentSection from "@/components/CommentSection.vue";
 
-const html = ref("")
-const messageList = ref<any[]>([])
+const html = ref("");
+const messageList = ref<any[]>([]);
 
-const uiStore = useUiStore()
+const uiStore = useUiStore();
+const markdownUtils = new MarkdownIt().utils;
 
 const md = new MarkdownIt({
   html: true,
   linkify: true,
   highlight(code: string, lang: string) {
     if (lang && hljs.getLanguage(lang)) {
-      return `<pre class="hljs"><code>${hljs.highlight(code, { language: lang }).value}</code></pre>`
+      return `<pre class="hljs"><code>${hljs.highlight(code, { language: lang }).value}</code></pre>`;
     }
-    return `<pre class="hljs"><code>${md.utils.escapeHtml(code)}</code></pre>`
-  }
-})
+    return `<pre class="hljs"><code>${markdownUtils.escapeHtml(code)}</code></pre>`;
+  },
+});
 
 async function fetchMessages() {
   try {
-    const res = await getMessages()
-    const payload = res.data.data.messages
-    messageList.value = payload.items.map((message: {
-      id: number
-      nickname: string
-      content: string
-      created_at: string
-    }) => ({
-      id: message.id,
-      name: message.nickname,
-      text: message.content,
-      time: message.created_at,
-    }))
+    const res = await getMessages();
+    const payload = res.data.data.messages;
+    messageList.value = payload.items.map(
+      (message: {
+        id: number;
+        nickname: string;
+        content: string;
+        created_at: string;
+      }) => ({
+        id: message.id,
+        name: message.nickname,
+        text: message.content,
+        time: message.created_at,
+      }),
+    );
   } catch {
-    messageList.value = []
+    messageList.value = [];
   }
 }
 
-async function handleMessage(data: { name: string; text: string; QQ?: string; email?: string }) {
-  await createMessage(data as any)
-  await fetchMessages()
+async function handleMessage(data: {
+  name: string;
+  text: string;
+  QQ?: string;
+  email?: string;
+}) {
+  await createMessage(data as any);
+  await fetchMessages();
 }
 
 onMounted(async () => {
-  await uiStore.fetchWebSetting()
-  const mdStr = uiStore.webSetting?.about_md
+  await uiStore.fetchWebSetting();
+  const mdStr = uiStore.webSetting?.about_md;
   if (mdStr) {
-    html.value = md.render(mdStr)
+    html.value = md.render(mdStr);
   }
-  await fetchMessages()
-})
+  await fetchMessages();
+});
 </script>
 
 <template>
   <div class="content">
     <div class="about-wrapper" v-html="html"></div>
 
-    <CommentSection title="留言墙" :comments="messageList" :on-submit="handleMessage" />
+    <CommentSection
+      title="留言墙"
+      :comments="messageList"
+      :on-submit="handleMessage"
+    />
   </div>
 </template>
 
 <style scoped>
 .content {
   width: 100%;
+  background-color: var(--color-background);
+  border-radius: var(--border-radius-xs);
+  padding: 20px;
 }
 
 .about-wrapper {
@@ -95,7 +110,7 @@ onMounted(async () => {
 }
 
 .about-wrapper :deep(code) {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: "JetBrains Mono", monospace;
   font-size: 14px;
 }
 

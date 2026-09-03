@@ -4,9 +4,25 @@
     <ul class="random-card__list" v-if="list.length">
       <li v-for="article in list" :key="article.slug">
         <RouterLink :to="`/article/${article.slug}`" class="random-card__link">
-          <img class="random-card__cover" :src="article.cover">
-          <p class="card-title">{{ article.title.length > 20 ? article.title.slice(0, 20) + '...' : article.title }}</p>
-
+          <img
+            v-if="article.cover"
+            class="random-card__cover"
+            :src="article.cover"
+            :alt="article.title"
+          />
+          <div
+            v-else
+            class="random-card__cover random-card__cover--placeholder"
+          >
+            暂无封面
+          </div>
+          <p class="card-title">
+            {{
+              article.title.length > 20
+                ? article.title.slice(0, 20) + "..."
+                : article.title
+            }}
+          </p>
         </RouterLink>
       </li>
     </ul>
@@ -15,32 +31,38 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted } from 'vue'
-import { useArticleStore } from '@/stores/article'
+import { computed, onMounted } from "vue";
+import { useArticleStore } from "@/stores/article";
 
-const articleStore = useArticleStore()
+const articleStore = useArticleStore();
 
 const list = computed(() => {
-  const all = [...articleStore.articleList]
+  const all = [...articleStore.articleList];
   for (let i = all.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
-    [all[i], all[j]] = [all[j], all[i]]
+    const current = all[i];
+    const target = all[j];
+
+    if (!current || !target) continue;
+
+    all[i] = target;
+    all[j] = current;
   }
-  return all.slice(0, 3)
-})
+  return all.slice(0, 3);
+});
 
 function formatDate(date: string) {
-  const d = new Date(date)
-  const m = (d.getMonth() + 1).toString().padStart(2, '0')
-  const day = d.getDate().toString().padStart(2, '0')
-  return `${m}-${day}`
+  const d = new Date(date);
+  const m = (d.getMonth() + 1).toString().padStart(2, "0");
+  const day = d.getDate().toString().padStart(2, "0");
+  return `${m}-${day}`;
 }
 
 onMounted(async () => {
   if (!articleStore.articleList.length) {
-    await articleStore.fetchAllArticles()
+    await articleStore.fetchAllArticles();
   }
-})
+});
 </script>
 
 <style scoped>
@@ -126,7 +148,14 @@ onMounted(async () => {
   object-fit: cover;
 }
 
-
+.random-card__cover--placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-background-mute);
+  color: var(--color-text-mute);
+  font-size: 13px;
+}
 
 .random-card__empty {
   font-size: 13px;

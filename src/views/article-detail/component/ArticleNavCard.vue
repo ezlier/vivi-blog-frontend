@@ -1,14 +1,22 @@
 <template>
-  <nav class="article-nav-card" v-if="headings.length">
+  <nav v-if="headings.length" class="article-nav-card">
     <h3 class="article-nav-card__title">目录</h3>
     <ul class="article-nav-card__list">
-      <li v-for="(h, i) in headings" :key="i" :class="[
-        'article-nav-card__item',
-        `article-nav-card__item--${h.level}`,
-        { 'article-nav-card__item--active': activeId === h.id }
-      ]">
-        <a :href="`#${h.id}`" @click.prevent="scrollTo(h.id)" :title="h.text">
-          {{ h.text }}
+      <li
+        v-for="heading in headings"
+        :key="heading.id"
+        class="article-nav-card__item"
+        :class="[
+          `article-nav-card__item--${heading.level}`,
+          { 'article-nav-card__item--active': activeId === heading.id },
+        ]"
+      >
+        <a
+          :href="`#${heading.id}`"
+          :title="heading.text"
+          @click.prevent="scrollTo(heading.id)"
+        >
+          {{ heading.text }}
         </a>
       </li>
     </ul>
@@ -16,78 +24,62 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue'
+import { computed, onMounted, onUnmounted, ref, watch } from "vue";
+import { extractMarkdownHeadings } from "@/utils/markdownHeadings";
 
-interface Heading {
-  id: string
-  text: string
-  level: number
-}
+const props = defineProps<{
+  content: string;
+}>();
 
-const headings = ref<Heading[]>([])
-const activeId = ref('')
-
-let observer: MutationObserver | null = null
-
-function collectHeadings() {
-  const container = document.querySelector('.article-body')
-  if (!container) return
-  const els = container.querySelectorAll('h1, h2, h3')
-  headings.value = Array.from(els).map((el) => {
-    const h = el as HTMLElement
-    if (!h.id) {
-      h.id = 'heading-' + Math.random().toString(36).slice(2, 8)
-    }
-    const rawText = h.innerText || h.textContent || ''
-    return {
-      id: h.id,
-      text: rawText.slice(0, 30) + (rawText.length > 30 ? '...' : ''),
-      level: Number(h.tagName[1]),
-    }
-  })
-}
+const headings = computed(() => extractMarkdownHeadings(props.content));
+const activeId = ref("");
 
 function scrollTo(id: string) {
-  const el = document.getElementById(id)
-  if (el) {
-    el.scrollIntoView({ behavior: 'smooth', block: 'start' })
-    activeId.value = id
-  }
+  const element = document.getElementById(id);
+  if (!element) return;
+
+  element.scrollIntoView({ behavior: "smooth", block: "start" });
+  activeId.value = id;
 }
 
 function onScroll() {
-  if (!headings.value.length) return
-  const els = headings.value.map((h) => document.getElementById(h.id)).filter(Boolean) as HTMLElement[]
-  if (!els.length) return
-  for (let i = els.length - 1; i >= 0; i--) {
-    if (els[i].getBoundingClientRect().top <= 120) {
-      activeId.value = headings.value[i].id
-      return
+  if (!headings.value.length) {
+    activeId.value = "";
+    return;
+  }
+
+  for (let index = headings.value.length - 1; index >= 0; index--) {
+    const heading = headings.value[index];
+    if (!heading) continue;
+
+    const element = document.getElementById(heading.id);
+    if (element && element.getBoundingClientRect().top <= 120) {
+      activeId.value = heading.id;
+      return;
     }
   }
-  activeId.value = headings.value[0].id
+
+  const firstHeading = headings.value[0];
+  activeId.value = firstHeading?.id ?? "";
 }
 
+watch(
+  headings,
+  (nextHeadings) => {
+    activeId.value = nextHeadings[0]?.id ?? "";
+    onScroll();
+  },
+  { immediate: true },
+);
+
 onMounted(() => {
-  window.addEventListener('scroll', onScroll, { passive: true })
-
-  // 延迟采集，等待 v-html 渲染完成
-  setTimeout(collectHeadings, 600)
-
-  // 监听 .article-body 内容变化（处理同一路由切换文章的场景）
-  const target = document.querySelector('.article-body')
-  if (target) {
-    observer = new MutationObserver(() => {
-      setTimeout(collectHeadings, 300)
-    })
-    observer.observe(target, { childList: true, subtree: true })
-  }
-})
+  window.addEventListener("scroll", onScroll, { passive: true });
+  onScroll();
+});
 
 onUnmounted(() => {
-  window.removeEventListener('scroll', onScroll)
-  observer?.disconnect()
-})
+  window.removeEventListener("scroll", onScroll);
+});
 </script>
 
 <style scoped>
@@ -161,11 +153,11 @@ onUnmounted(() => {
   color: var(--color-heading);
 }
 
-.article-nav-card__item--level2 a {
+.article-nav-card__item--2 a {
   padding-left: 24px;
 }
 
-.article-nav-card__item--level3 a {
+.article-nav-card__item--3 a {
   padding-left: 36px;
 }
 </style>

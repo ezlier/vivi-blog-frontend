@@ -7,9 +7,8 @@
 
     <Navbar />
 
-    <div class="head" :style="{ height: headerHeight }">
-      <Header v-if="route.name === 'Home'" />
-      <h1 v-else style="color: var(--color-text);">{{ route.name }}</h1>
+    <div class="head">
+      <h1 style="color: var(--color-text);">{{ route.name }}</h1>
     </div>
 
     <main class="front-main">
@@ -38,7 +37,6 @@ import { useUiStore } from '@/stores/ui'
 import { useRoute } from 'vue-router'
 import Navbar from './component/navbar.vue'
 import Footer from './component/footer.vue'
-import Header from './component/header.vue'
 import Background from './component/background.vue'
 import Dock from './component/dock.vue'
 import SplashScreen from '@/components/SplashScreen.vue'
@@ -54,17 +52,11 @@ onMounted(async () => {
   await ui.fetchWebSetting()
   splashRef.value?.close()
 })
-
-const headerHeight = computed(() => {
-  if (route.name === "Home") return "100vh";
-  return "300px";
-});
-
 </script>
 
 <style scoped>
 .head {
-  transition: height 0.5s ease;
+  height: 300px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -91,7 +83,6 @@ const headerHeight = computed(() => {
   border-radius: var(--border-radius-xs);
   box-shadow: var(--box-shadow);
   border-color: var(--color-border);
-  background-color: var(--color-background-soft);
   padding: 1.125rem;
 }
 

@@ -43,9 +43,6 @@ onUnmounted(() => {
                 <div class="moon"></div>
             </div>
         </div>
-
-        <div class="TimeLine">connecting [OK] ——{{ timestamp }}</div>
-
     </div>
 </template>
 
