@@ -8,67 +8,34 @@
       </RouterLink>
 
       <div class="navbar__nav-section" role="navigation" aria-label="主导航">
-        <RouterLink
-          v-for="item in navItems"
-          :key="item.to"
-          :to="item.to"
-          class="navbar__link"
-          active-class="navbar__link--active"
-          @click="closeMenu"
-        >
+        <RouterLink v-for="item in navItems" :key="item.to" :to="item.to" class="navbar__link"
+          active-class="navbar__link--active" @click="closeMenu">
           {{ item.label }}
         </RouterLink>
       </div>
 
-      <button
-        class="navbar__menu-button"
-        type="button"
-        :aria-label="isMenuOpen ? '关闭导航菜单' : '打开导航菜单'"
-        :aria-expanded="isMenuOpen"
-        aria-controls="mobile-navigation-drawer"
-        @click="toggleMenu"
-      >
+      <button class="navbar__menu-button" type="button" :aria-label="isMenuOpen ? '关闭导航菜单' : '打开导航菜单'"
+        :aria-expanded="isMenuOpen" aria-controls="mobile-navigation-drawer" @click="toggleMenu">
         <span aria-hidden="true">≡</span>
       </button>
     </div>
 
     <Transition name="navbar-backdrop">
-      <div
-        v-if="isMenuOpen"
-        class="navbar__backdrop"
-        aria-hidden="true"
-        @click="closeMenu"
-      />
+      <div v-if="isMenuOpen" class="navbar__backdrop" aria-hidden="true" @click="closeMenu" />
     </Transition>
 
     <Transition name="navbar-drawer">
-      <aside
-        v-if="isMenuOpen"
-        id="mobile-navigation-drawer"
-        class="navbar__drawer"
-        aria-label="移动端导航"
-      >
+      <aside v-if="isMenuOpen" id="mobile-navigation-drawer" class="navbar__drawer" aria-label="移动端导航">
         <div class="navbar__drawer-header">
           <span class="navbar__drawer-title">导航</span>
-          <button
-            class="navbar__drawer-close"
-            type="button"
-            aria-label="关闭导航菜单"
-            @click="closeMenu"
-          >
+          <button class="navbar__drawer-close" type="button" aria-label="关闭导航菜单" @click="closeMenu">
             <span aria-hidden="true">×</span>
           </button>
         </div>
 
         <nav class="navbar__drawer-links">
-          <RouterLink
-            v-for="item in navItems"
-            :key="item.to"
-            :to="item.to"
-            class="navbar__drawer-link"
-            active-class="navbar__drawer-link--active"
-            @click="closeMenu"
-          >
+          <RouterLink v-for="item in navItems" :key="item.to" :to="item.to" class="navbar__drawer-link"
+            active-class="navbar__drawer-link--active" @click="closeMenu">
             <span>{{ item.label }}</span>
             <span class="navbar__drawer-arrow" aria-hidden="true">→</span>
           </RouterLink>
@@ -145,8 +112,8 @@ onUnmounted(() => {
 
 <style scoped>
 .navbar {
-  --navbar-panel-background: var(--nav-color, rgba(255, 255, 255, 0.55));
-  --navbar-panel-border: rgba(255, 255, 255, 0.46);
+  --navbar-panel-background: var(--nav-color, rgba(255, 255, 255, 0.78));
+  --navbar-panel-border: rgba(255, 255, 255, 0);
   --navbar-panel-shadow: 0 10px 30px rgba(73, 45, 52, 0.08);
   --navbar-drawer-background: rgba(255, 252, 253, 0.94);
   --navbar-drawer-shadow: -18px 0 50px rgba(73, 45, 52, 0.16);
@@ -198,8 +165,6 @@ onUnmounted(() => {
   border: 1px solid var(--navbar-panel-border);
   background: var(--navbar-panel-background);
   box-shadow: var(--navbar-panel-shadow);
-  backdrop-filter: blur(14px) saturate(145%);
-  -webkit-backdrop-filter: blur(14px) saturate(145%);
   transition:
     background 0.3s ease,
     border-color 0.3s ease,
@@ -244,7 +209,7 @@ onUnmounted(() => {
 
 .navbar__link {
   padding: 7px 14px;
-  border-radius: 10px;
+  border-radius: var(--border-radius-xs);
   color: var(--color-text);
   font-size: 15px;
   font-weight: 500;
@@ -253,6 +218,8 @@ onUnmounted(() => {
   transition:
     background 0.2s,
     color 0.2s;
+  backdrop-filter: blur(14px) saturate(145%);
+  -webkit-backdrop-filter: blur(14px) saturate(145%);
 }
 
 .navbar__link:hover {
@@ -289,11 +256,9 @@ onUnmounted(() => {
 }
 
 .navbar__menu-button:hover {
-  background: color-mix(
-    in srgb,
-    var(--navbar-panel-background) 82%,
-    var(--color-primary)
-  );
+  background: color-mix(in srgb,
+      var(--navbar-panel-background) 82%,
+      var(--color-primary));
 }
 
 .navbar__menu-button:active {
@@ -470,6 +435,7 @@ onUnmounted(() => {
 }
 
 @media (min-width: 769px) {
+
   .navbar__drawer,
   .navbar__backdrop {
     display: none !important;
