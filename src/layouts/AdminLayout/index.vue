@@ -2,25 +2,68 @@
   <div class="admin-layout" :class="{ collapsed: ui.sidebarCollapsed }">
     <aside class="admin-sidebar">
       <div class="sidebar-header">
-        <RouterLink to="/admin/dashboard" class="admin-logo">Blog Admin</RouterLink>
+        <RouterLink to="/admin/dashboard" class="admin-logo"
+          >Blog Admin</RouterLink
+        >
       </div>
       <nav class="sidebar-nav">
-        <RouterLink to="/admin/dashboard" active-class="active">📊 仪表盘</RouterLink>
+        <RouterLink to="/admin/dashboard" active-class="active"
+          >📊 仪表盘</RouterLink
+        >
 
-        <div class="nav-dropdown" @mouseenter="showArticleMenu = true" @mouseleave="showArticleMenu = false">
-          <RouterLink to="/admin/articles" active-class="active" class="nav-dropdown-trigger">📝 文章管理
+        <div
+          class="nav-dropdown"
+          @mouseenter="showArticleMenu = true"
+          @mouseleave="showArticleMenu = false"
+        >
+          <RouterLink
+            to="/admin/articles"
+            active-class="active"
+            class="nav-dropdown-trigger"
+            >📝 文章管理
             <span class="arrow">▾</span>
           </RouterLink>
           <div v-show="showArticleMenu" class="nav-dropdown-menu">
-            <RouterLink to="/admin/article/edit" active-class="active">✏️ 创建文章</RouterLink>
+            <RouterLink to="/admin/article/edit" active-class="active"
+              >✏️ 创建文章</RouterLink
+            >
           </div>
         </div>
 
-        <RouterLink to="/admin/comments" active-class="active">💬 评论管理</RouterLink>
-        <RouterLink to="/admin/message" active-class="active">📩 留言管理</RouterLink>
-        <RouterLink to="/admin/tags" active-class="active">🏷️ 标签管理</RouterLink>
-        <RouterLink to="/admin/users" active-class="active">👤 用户管理</RouterLink>
-        <RouterLink to="/admin/settings" active-class="active">⚙️ 网站设置</RouterLink>
+        <div
+          class="nav-dropdown"
+          @mouseenter="showEssayMenu = true"
+          @mouseleave="showEssayMenu = false"
+        >
+          <RouterLink
+            to="/admin/essays"
+            active-class="active"
+            class="nav-dropdown-trigger"
+            >📒 笔记管理
+            <span class="arrow">▾</span>
+          </RouterLink>
+          <div v-show="showEssayMenu" class="nav-dropdown-menu">
+            <RouterLink to="/admin/essay/create" active-class="active"
+              >✏️ 创建笔记</RouterLink
+            >
+          </div>
+        </div>
+
+        <RouterLink to="/admin/comments" active-class="active"
+          >💬 评论管理</RouterLink
+        >
+        <RouterLink to="/admin/message" active-class="active"
+          >📩 留言管理</RouterLink
+        >
+        <RouterLink to="/admin/tags" active-class="active"
+          >🏷️ 标签管理</RouterLink
+        >
+        <RouterLink to="/admin/users" active-class="active"
+          >👤 用户管理</RouterLink
+        >
+        <RouterLink to="/admin/settings" active-class="active"
+          >⚙️ 网站设置</RouterLink
+        >
       </nav>
     </aside>
 
@@ -39,13 +82,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
-import { useAuthStore } from '@/stores/auth'
-import { useUiStore } from '@/stores/ui'
+import { ref } from "vue";
+import { useAuthStore } from "@/stores/auth";
+import { useUiStore } from "@/stores/ui";
 
-const auth = useAuthStore()
-const ui = useUiStore()
-const showArticleMenu = ref(false)
+const auth = useAuthStore();
+const ui = useUiStore();
+const showArticleMenu = ref(false);
+const showEssayMenu = ref(false);
 </script>
 
 <style scoped>

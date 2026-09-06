@@ -11,7 +11,6 @@ const ArticleDetail = () => import("@/views/article-detail/index.vue");
 const EssayView = () => import("@/views/essay/index.vue");
 const ArchiveView = () => import("@/views/archive/index.vue");
 const MessageView = () => import("@/views/message/index.vue");
-const AboutView = () => import("@/views/about/index.vue");
 const LoginView = () => import("@/views/login/index.vue");
 
 // 侧边栏
@@ -24,6 +23,8 @@ const ArticleSidebar = () =>
 const AdminDashboard = () => import("@/views/admin/dashboard/index.vue");
 const AdminArticles = () => import("@/views/admin/articles/index.vue");
 const AdminArticleEdit = () => import("@/views/admin/article-edit/index.vue");
+const AdminEssays = () => import("@/views/admin/essays/index.vue");
+const AdminEssayCreate = () => import("@/views/admin/essay-create/index.vue");
 const AdminComments = () => import("@/views/admin/comments/index.vue");
 const AdminMessages = () => import("@/views/admin/message/index.vue");
 const AdminTags = () => import("@/views/admin/tags/index.vue");
@@ -80,14 +81,6 @@ const routes: RouteRecordRaw[] = [
           sidebar: CommonSidebar,
         },
       },
-      {
-        path: "about",
-        name: "About",
-        components: {
-          default: AboutView,
-          sidebar: CommonSidebar,
-        },
-      },
     ],
   },
 
@@ -107,6 +100,12 @@ const routes: RouteRecordRaw[] = [
         path: "article/edit/:slug?",
         name: "AdminArticleEdit",
         component: AdminArticleEdit,
+      },
+      { path: "essays", name: "AdminEssays", component: AdminEssays },
+      {
+        path: "essay/create",
+        name: "AdminEssayCreate",
+        component: AdminEssayCreate,
       },
       { path: "comments", name: "AdminComments", component: AdminComments },
       { path: "message", name: "AdminMessages", component: AdminMessages },

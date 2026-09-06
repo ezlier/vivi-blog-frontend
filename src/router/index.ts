@@ -11,28 +11,30 @@ const router = createRouter({
 });
 
 // 全局前置守卫：后台路由鉴权
-router.beforeEach((to, _from, next) => {
-  if (to.meta.requiresAuth) {
-    const auth = useAuthStore();
-    if (!auth.isLoggedIn) {
-      next("/login");
-      return;
-    }
+router.beforeEach((to) => {
+  const auth = useAuthStore();
+
+  if (to.meta.requiresAuth && !auth.isLoggedIn) {
+    return {
+      name: "Login",
+      query: { redirect: to.fullPath },
+    };
   }
 
-  let originTitle = document.title;
+  if (to.name === "Login" && auth.isLoggedIn) {
+    return { name: "AdminDashboard" };
+  }
 
-  document.addEventListener("visibilitychange", () => {
-    if (document.hidden) {
-      // 页面隐藏（切走标签）
-      document.title = "在暗处，有双眼睛盯着你";
-    } else {
-      // 页面激活（切回来）
-      document.title = originTitle;
-    }
-  });
+  return true;
+});
 
-  next();
+const originTitle = document.title;
+document.addEventListener("visibilitychange", () => {
+  if (document.hidden) {
+    document.title = "在暗处，有双眼睛盯着你";
+  } else {
+    document.title = originTitle;
+  }
 });
 
 export default router;

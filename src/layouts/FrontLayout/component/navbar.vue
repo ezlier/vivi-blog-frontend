@@ -61,7 +61,6 @@ const navItems = [
   { to: "/essay", label: "笔记" },
   { to: "/archive", label: "归档" },
   { to: "/message", label: "留言" },
-  { to: "/about", label: "关于" },
 ];
 
 function onScroll() {

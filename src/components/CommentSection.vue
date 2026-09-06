@@ -19,7 +19,11 @@
         <div class="comment-item__body">
           <div class="comment-item__head">
             <span class="comment-item__name">{{ item.name }}</span>
-            <span class="comment-item__time">{{ item.time }}</span>
+            <span class="comment-item__time">
+              <time class="essay-card__date essay-card__date--expanded" :datetime="item.time">
+                {{ formatDate(item.time) }}
+              </time>
+            </span>
           </div>
           <p class="comment-item__text">{{ item.text }}</p>
         </div>
@@ -63,6 +67,17 @@ async function handleSubmit(data: { name: string; text: string; QQ?: string; ema
     formRef.value?.reset()
   } catch (err: any) {
   }
+}
+
+function formatDate(value: string) {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return value;
+
+  return new Intl.DateTimeFormat("zh-CN", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).format(date);
 }
 </script>
 

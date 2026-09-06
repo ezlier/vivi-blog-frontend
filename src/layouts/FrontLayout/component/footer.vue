@@ -11,9 +11,6 @@
       </div>
 
       <div class="footer__links">
-        <RouterLink to="/home">首页</RouterLink>
-        <RouterLink to="/archive">归档</RouterLink>
-        <RouterLink to="/about">关于</RouterLink>
         <a href="https://github.com/ezlier" target="_blank" rel="noopener">GitHub</a>
       </div>
     </div>
