@@ -97,14 +97,17 @@ defineProps<{
 }
 
 .hero-content {
+  position: absolute;
+  top: 43%;
+  left: 50%;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 22px;
   width: min(100%, 800px);
-  margin: auto auto 0;
+  margin: 0;
   text-align: center;
-  transform: translateY(-3vh);
+  transform: translate(-50%, -50%);
 }
 
 .avatar-frame {
@@ -152,15 +155,19 @@ defineProps<{
 }
 
 .typing-line {
+  position: absolute;
+  bottom: 116px;
+  left: 50%;
   display: flex;
   align-items: center;
-  align-self: center;
   min-height: 28px;
-  margin: 0 auto 14px;
+  margin: 0;
   color: var(--home-muted);
   font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
   font-size: 13px;
   letter-spacing: 0.08em;
+  white-space: nowrap;
+  transform: translateX(-50%);
 }
 
 .typing-cursor {
@@ -198,9 +205,10 @@ defineProps<{
   }
 
   .hero-content {
+    top: 42%;
     gap: 24px;
     width: 100%;
-    transform: translateY(-2vh);
+    transform: translate(-50%, -50%);
   }
 
   .hero-greeting {
@@ -208,7 +216,7 @@ defineProps<{
   }
 
   .typing-line {
-    margin-bottom: 12px;
+    bottom: 100px;
   }
 }
 

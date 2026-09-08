@@ -1,20 +1,10 @@
 <template>
   <main class="home-screen" :class="{ 'home-screen--dark': ui.isDark }">
     <HomeAtmosphere :dark="ui.isDark" />
-    <HomeHero
-      :site-name="ui.webSetting?.web_name || 'Vivi Blog'"
-      :name="ui.webSetting?.name || 'Vivi'"
-      :avatar="ui.webSetting?.name_avatar || null"
-      :current-time="currentTime"
-      :current-date-time="currentDateTime"
-      :typing-text="typingText"
-      :navigation-floating="isNavigationFloating"
-    />
-    <HomeContent
-      :about-html="aboutHtml"
-      :article="latestArticle"
-      :loading="articleStore.loading"
-    />
+    <HomeHero :site-name="ui.webSetting?.web_name || 'Vivi Blog'" :name="ui.webSetting?.name || 'Vivi'"
+      :avatar="ui.webSetting?.name_avatar || null" :current-time="currentTime" :current-date-time="currentDateTime"
+      :typing-text="typingText" :navigation-floating="isNavigationFloating" />
+    <HomeContent :about-html="aboutHtml" :article="latestArticle" :loading="articleStore.loading" />
   </main>
 </template>
 
@@ -34,9 +24,16 @@ const currentTime = ref("");
 const currentDateTime = ref("");
 const typingText = ref("");
 let clockTimer: ReturnType<typeof setInterval> | undefined;
-let typingTimer: ReturnType<typeof setInterval> | undefined;
+let typingTimer: ReturnType<typeof setTimeout> | undefined;
+let lastTypingIndex = -1;
 
 const latestArticle = computed(() => articleStore.articles[0] || null);
+const typingCopies = [
+  "霜降天，露初寒，旧约经年终未还。",
+  "暮江天，水微澜，孤帆远去几时还。",
+  "深冬夜，雪微残，故人一别隔千山。",
+  "立春天，风渐暖，伊人一去不复返。",
+];
 const markdown = new MarkdownIt({ breaks: true, linkify: true });
 const aboutHtml = computed(() => {
   const about = ui.webSetting?.about_md?.trim();
@@ -52,13 +49,38 @@ function updateTime() {
 }
 
 function startTyping() {
-  const text = "打字机效果";
+  let nextIndex = Math.floor(Math.random() * typingCopies.length);
+  while (typingCopies.length > 1 && nextIndex === lastTypingIndex) {
+    nextIndex = Math.floor(Math.random() * typingCopies.length);
+  }
+  lastTypingIndex = nextIndex;
+
+  const text = typingCopies[nextIndex]!;
   let index = 0;
 
-  typingTimer = setInterval(() => {
-    typingText.value = text.slice(0, index);
-    index = index >= text.length ? 0 : index + 1;
-  }, 180);
+  const deleteNext = () => {
+    if (index > 0) {
+      index -= 1;
+      typingText.value = text.slice(0, index);
+      typingTimer = setTimeout(deleteNext, 90);
+      return;
+    }
+
+    startTyping();
+  };
+
+  const typeNext = () => {
+    if (index < text.length) {
+      index += 1;
+      typingText.value = text.slice(0, index);
+      typingTimer = setTimeout(typeNext, 140);
+      return;
+    }
+
+    typingTimer = setTimeout(deleteNext, 2000);
+  };
+
+  typeNext();
 }
 
 function updateNavigationState() {
@@ -80,7 +102,7 @@ onMounted(async () => {
 
 onUnmounted(() => {
   if (clockTimer) clearInterval(clockTimer);
-  if (typingTimer) clearInterval(typingTimer);
+  if (typingTimer) clearTimeout(typingTimer);
   window.removeEventListener("scroll", updateNavigationState);
 });
 </script>

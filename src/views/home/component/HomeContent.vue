@@ -42,30 +42,16 @@ function formatDate(value: string) {
           <span class="placeholder-line placeholder-line--short" />
         </div>
 
-        <RouterLink
-          v-else-if="article"
-          :to="`/article/${article.slug}`"
-          class="latest-article"
-        >
+        <RouterLink v-else-if="article" :to="`/article/${article.slug}`" class="latest-article">
           <div class="latest-article__content">
             <time :datetime="article.created_at">{{
               formatDate(article.created_time)
-            }}</time>
+              }}</time>
             <h3>{{ article.title }}</h3>
-            <span class="latest-article__read"
-              >阅读文章 <span aria-hidden="true">↗</span></span
-            >
+            <span class="latest-article__read">阅读文章 <span aria-hidden="true">↗</span></span>
           </div>
-          <div
-            class="latest-article__cover"
-            :class="{ 'latest-article__cover--empty': !article.cover }"
-          >
-            <img
-              v-if="article.cover"
-              :src="article.cover"
-              :alt="article.title"
-              loading="lazy"
-            />
+          <div class="latest-article__cover" :class="{ 'latest-article__cover--empty': !article.cover }">
+            <img v-if="article.cover" :src="article.cover" :alt="article.title" loading="lazy" />
             <span v-else aria-hidden="true">V</span>
           </div>
         </RouterLink>
@@ -80,7 +66,7 @@ function formatDate(value: string) {
 .home-content {
   position: relative;
   z-index: 2;
-  min-height: 520px;
+  min-height: 70dvh;
   padding: clamp(78px, 11vw, 144px) clamp(22px, 7vw, 110px) 140px;
 }
 
@@ -236,11 +222,9 @@ function formatDate(value: string) {
   display: grid;
   place-items: center;
   background:
-    radial-gradient(
-      circle at 50% 42%,
+    radial-gradient(circle at 50% 42%,
       rgba(255, 183, 144, 0.8),
-      transparent 18%
-    ),
+      transparent 18%),
     linear-gradient(135deg, #392e2d, #161619);
 }
 

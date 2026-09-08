@@ -1,5 +1,5 @@
 <script setup lang="ts">
-type NavigationIcon = "home" | "article" | "archive" | "about";
+type NavigationIcon = "home" | "article" | "archive" | "essay" | "message";
 
 interface NavigationItem {
   label: string;
@@ -15,8 +15,9 @@ defineProps<{
 const navigationItems: NavigationItem[] = [
   { label: "首页", icon: "home", anchor: "#top" },
   { label: "文章", icon: "article", path: "/home" },
+  { label: "笔记", icon: "essay", path: "/essay" },
   { label: "归档", icon: "archive", path: "/archive" },
-  { label: "关于", icon: "about", anchor: "#about" },
+  { label: "留言", icon: "message", path: "/message" },
 ];
 
 function handleAnchorClick(event: MouseEvent) {
@@ -34,58 +35,30 @@ function handleAnchorClick(event: MouseEvent) {
 </script>
 
 <template>
-  <nav
-    class="home-navigation"
-    :class="{ 'home-navigation--floating': floating }"
-    aria-label="主页导航"
-  >
+  <nav class="home-navigation" :class="{ 'home-navigation--floating': floating }" aria-label="主页导航">
     <template v-for="item in navigationItems" :key="item.label">
-      <a
-        v-if="item.anchor"
-        class="home-navigation__item"
-        :href="item.anchor"
-        :aria-label="item.label"
-        @click="handleAnchorClick"
-      >
+      <a v-if="item.anchor" class="home-navigation__item" :href="item.anchor" :aria-label="item.label"
+        @click="handleAnchorClick">
         <span class="home-navigation__icon" aria-hidden="true">
           <svg viewBox="0 0 24 24">
-            <path
-              v-if="item.icon === 'home'"
-              d="m4 10 8-6 8 6v9a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1z"
-            />
-            <path
-              v-else-if="item.icon === 'article'"
-              d="M6 4h12v16H6zM9 8h6M9 12h6M9 16h4"
-            />
-            <path
-              v-else-if="item.icon === 'archive'"
-              d="M4 6h16v4H4zM6 10v9h12v-9M9 14h6"
-            />
+            <path v-if="item.icon === 'home'" d="m4 10 8-6 8 6v9a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1z" />
+            <path v-else-if="item.icon === 'article'" d="M6 4h12v16H6zM9 8h6M9 12h6M9 16h4" />
+            <path v-else-if="item.icon === 'archive'" d="M4 6h16v4H4zM6 10v9h12v-9M9 14h6" />
+            <path v-else-if="item.icon === 'essay'"
+              d="M6 4h12a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1zm11 0v14H7V5h10zm-2 2H9v2h6V6zm0 4H9v2h6v-2zm0 4H9v2h4v-2z" />
             <path v-else d="M5 5h14v14H5zM8 9h8M8 13h5" />
           </svg>
         </span>
         <span class="home-navigation__label">{{ item.label }}</span>
       </a>
-      <RouterLink
-        v-else
-        class="home-navigation__item"
-        :to="item.path!"
-        :aria-label="item.label"
-      >
+      <RouterLink v-else class="home-navigation__item" :to="item.path!" :aria-label="item.label">
         <span class="home-navigation__icon" aria-hidden="true">
           <svg viewBox="0 0 24 24">
-            <path
-              v-if="item.icon === 'home'"
-              d="m4 10 8-6 8 6v9a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1z"
-            />
-            <path
-              v-else-if="item.icon === 'article'"
-              d="M6 4h12v16H6zM9 8h6M9 12h6M9 16h4"
-            />
-            <path
-              v-else-if="item.icon === 'archive'"
-              d="M4 6h16v4H4zM6 10v9h12v-9M9 14h6"
-            />
+            <path v-if="item.icon === 'home'" d="m4 10 8-6 8 6v9a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1z" />
+            <path v-else-if="item.icon === 'article'" d="M6 4h12v16H6zM9 8h6M9 12h6M9 16h4" />
+            <path v-else-if="item.icon === 'archive'" d="M4 6h16v4H4zM6 10v9h12v-9M9 14h6" />
+            <path v-else-if="item.icon === 'essay'"
+              d="M6 4h12a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1zm11 0v14H7V5h10zm-2 2H9v2h6V6zm0 4H9v2h6v-2zm0 4H9v2h4v-2z" />
             <path v-else d="M5 5h14v14H5zM8 9h8M8 13h5" />
           </svg>
         </span>
@@ -216,6 +189,7 @@ function handleAnchorClick(event: MouseEvent) {
   .home-navigation--floating {
     top: 10px;
     gap: 1px;
+    max-height: 40px;
   }
 
   .home-navigation--floating .home-navigation__item {
