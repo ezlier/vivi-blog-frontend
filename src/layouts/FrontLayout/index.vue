@@ -60,6 +60,7 @@ onMounted(async () => {
   display: flex;
   align-items: center;
   justify-content: center;
+  font-family: Anurati;
 }
 
 .front-main {
@@ -74,11 +75,11 @@ onMounted(async () => {
 }
 
 .leftcolumn {
-  flex: 0 0 23%;
+  flex: 1;
 }
 
 .rightcolumn {
-  flex: 1;
+  flex: 0 0 77%;
   min-width: 0;
   border-radius: var(--border-radius-xs);
   box-shadow: var(--box-shadow);

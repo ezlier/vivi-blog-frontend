@@ -1,63 +1,28 @@
 <template>
-  <MdEditor :model-value="props.modelValue" @update:model-value="emit('update:modelValue', $event)" />
+  <MdEditorView
+    v-bind="$attrs"
+    :model-value="props.modelValue"
+    :theme="ui.isDark ? 'dark' : 'light'"
+    @update:model-value="emit('update:modelValue', $event)"
+  />
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue'
-import MarkdownIt from 'markdown-it'
-import { MdEditor } from "md-editor-v3"
-import "md-editor-v3/lib/style.css"
-import hljs from 'highlight.js'
+import { useUiStore } from "@/stores/ui";
+import { MdEditor as MdEditorView } from "md-editor-v3";
+import "md-editor-v3/lib/style.css";
+
+defineOptions({ inheritAttrs: false });
 
 const props = defineProps<{
-  modelValue: string
-}>()
+  modelValue: string;
+}>();
 
 const emit = defineEmits<{
-  'update:modelValue': [value: string]
-}>()
+  "update:modelValue": [value: string];
+}>();
 
-const isFullscreen = ref(false)
-
-const md = new MarkdownIt({
-  html: true,
-  linkify: true,
-  typographer: true,
-  highlight(str: string, lang: string) {
-    if (lang && hljs.getLanguage(lang)) {
-      try {
-        return hljs.highlight(str, { language: lang }).value
-      } catch { }
-    }
-    return ''
-  },
-})
-
-const renderedHtml = computed(() => md.render(props.modelValue || ''))
-
-function insertMarkdown(before: string, after: string) {
-  const textarea = document.querySelector('.md-editor__input') as HTMLTextAreaElement | null
-  if (!textarea) return
-  const start = textarea.selectionStart
-  const end = textarea.selectionEnd
-  const selected = props.modelValue.substring(start, end)
-  const newText =
-    props.modelValue.substring(0, start) +
-    before +
-    selected +
-    after +
-    props.modelValue.substring(end)
-  emit('update:modelValue', newText)
-  setTimeout(() => {
-    textarea.focus()
-    const cursor = start + before.length + selected.length
-    textarea.setSelectionRange(cursor, cursor)
-  }, 0)
-}
-
-function toggleFullscreen() {
-  isFullscreen.value = !isFullscreen.value
-}
+const ui = useUiStore();
 </script>
 
 <style scoped>
@@ -130,7 +95,7 @@ function toggleFullscreen() {
   border: none;
   border-right: 1px solid var(--color-border, #dcdfe6);
   resize: none;
-  font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+  font-family: "JetBrains Mono", "Fira Code", "Consolas", monospace;
   font-size: 14px;
   line-height: 1.6;
   color: var(--color-text, #333);
@@ -148,6 +113,15 @@ function toggleFullscreen() {
 
 <!-- markdown 预览全局样式 (不使用 scoped) -->
 <style>
+.dark .md-editor {
+  color-scheme: dark;
+}
+
+.dark .md-editor .md-editor-toolbar,
+.dark .md-editor .md-editor-content {
+  color-scheme: dark;
+}
+
 .markdown-body h1,
 .markdown-body h2,
 .markdown-body h3,
@@ -187,13 +161,13 @@ function toggleFullscreen() {
 }
 
 .markdown-body code {
-  font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+  font-family: "JetBrains Mono", "Fira Code", "Consolas", monospace;
   font-size: 0.9em;
 }
 
-.markdown-body :not(pre)>code {
-  background: #f0f0f0;
-  color: #e74c3c;
+.markdown-body :not(pre) > code {
+  background: var(--color-background-mute, #f0f0f0);
+  color: var(--color-heading, #e74c3c);
   padding: 2px 6px;
   border-radius: 4px;
 }
@@ -202,8 +176,8 @@ function toggleFullscreen() {
   border-left: 4px solid var(--color-heading, #42b883);
   margin: 0.8em 0;
   padding: 6px 14px;
-  color: #666;
-  background: #f9f9f9;
+  color: var(--color-text-mute, #666);
+  background: var(--color-background-mute, #f9f9f9);
 }
 
 .markdown-body ul,
@@ -216,7 +190,7 @@ function toggleFullscreen() {
 }
 
 .markdown-body a {
-  color: #42b883;
+  color: var(--color-primary, #42b883);
 }
 
 .markdown-body img {

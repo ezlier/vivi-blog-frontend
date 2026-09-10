@@ -2,22 +2,48 @@
   <div class="page admin-messages">
     <div class="page-header">
       <h1>留言管理</h1>
-      <el-button type="danger" :disabled="selectedIds.length === 0" @click="handleBatchDelete">
+      <el-button
+        type="danger"
+        :disabled="selectedIds.length === 0"
+        @click="handleBatchDelete"
+      >
         批量删除 ({{ selectedIds.length }})
       </el-button>
     </div>
 
-    <el-table :data="messages" stripe v-loading="loading" empty-text="暂无留言" @selection-change="onSelectionChange">
+    <el-table
+      :data="messages"
+      stripe
+      v-loading="loading"
+      empty-text="暂无留言"
+      @selection-change="onSelectionChange"
+    >
       <el-table-column type="selection" width="44" />
-      <el-table-column prop="text" label="留言内容" min-width="240" show-overflow-tooltip />
+      <el-table-column
+        prop="text"
+        label="留言内容"
+        min-width="240"
+        show-overflow-tooltip
+      />
       <el-table-column prop="name" label="昵称" width="120" />
       <el-table-column prop="IP" label="IP" width="140" />
-      <el-table-column prop="time" label="时间" width="170" />
+      <el-table-column label="时间" width="170">
+        <template #default="{ row }">
+          {{ formatAdminDateTime(row.time) }}
+        </template>
+      </el-table-column>
       <el-table-column prop="QQ" label="QQ" width="120" />
-      <el-table-column prop="email" label="Email" width="180" show-overflow-tooltip />
+      <el-table-column
+        prop="email"
+        label="Email"
+        width="180"
+        show-overflow-tooltip
+      />
       <el-table-column label="操作" width="100" fixed="right">
         <template #default="{ row }">
-          <el-button size="small" type="danger" @click="handleDelete(row.id)">删除</el-button>
+          <el-button size="small" type="danger" @click="handleDelete(row.id)"
+            >删除</el-button
+          >
         </template>
       </el-table-column>
     </el-table>
@@ -25,91 +51,102 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
-import { getAdminMessages, deleteMessage, batchDeleteMessages } from '@/api/message'
-import { ElMessage, ElMessageBox } from 'element-plus'
+import { ref, onMounted } from "vue";
+import {
+  getAdminMessages,
+  deleteMessage,
+  batchDeleteMessages,
+} from "@/api/message";
+import { ElMessage, ElMessageBox } from "element-plus";
+import { formatAdminDateTime } from "@/utils/date";
 
 interface MessageItem {
-  id: number
-  text: string
-  name: string
-  ip: string
-  time: string
-  QQ?: string
-  email?: string
+  id: number;
+  text: string;
+  name: string;
+  ip: string;
+  time: string;
+  QQ?: string;
+  email?: string;
 }
 
-const messages = ref<MessageItem[]>([])
-const loading = ref(false)
-const selectedIds = ref<number[]>([])
+const messages = ref<MessageItem[]>([]);
+const loading = ref(false);
+const selectedIds = ref<number[]>([]);
 
 function onSelectionChange(rows: MessageItem[]) {
-  selectedIds.value = rows.map((r) => r.id)
+  selectedIds.value = rows.map((r) => r.id);
 }
 
 async function fetchMessages() {
-  loading.value = true
+  loading.value = true;
   try {
-    const res = await getAdminMessages()
-    const payload = res.data.data.messages
-    messages.value = payload.items.map((message: {
-      id: number
-      IP: string
-      nickname: string
-      email?: string
-      QQ?: string
-      content: string
-      created_at: string
-    }) => ({
-      id: message.id,
-      text: message.content,
-      name: message.nickname,
-      IP: message.IP,
-      time: message.created_at,
-      QQ: message.QQ,
-      email: message.email,
-    }))
+    const res = await getAdminMessages();
+    const payload = res.data.data.messages;
+    messages.value = payload.items.map(
+      (message: {
+        id: number;
+        IP: string;
+        nickname: string;
+        email?: string;
+        QQ?: string;
+        content: string;
+        created_at: string;
+      }) => ({
+        id: message.id,
+        text: message.content,
+        name: message.nickname,
+        IP: message.IP,
+        time: message.created_at,
+        QQ: message.QQ,
+        email: message.email,
+      }),
+    );
   } catch {
-    ElMessage.error('获取留言列表失败')
+    ElMessage.error("获取留言列表失败");
   } finally {
-    loading.value = false
+    loading.value = false;
   }
 }
 
 async function handleDelete(id: number) {
   try {
-    await ElMessageBox.confirm('确定删除该留言？', '提示', { type: 'warning' })
+    await ElMessageBox.confirm("确定删除该留言？", "提示", { type: "warning" });
   } catch {
-    return
+    return;
   }
   try {
-    await deleteMessage(id)
-    ElMessage.success('删除成功')
-    fetchMessages()
+    await deleteMessage(id);
+    ElMessage.success("删除成功");
+    fetchMessages();
   } catch {
-    ElMessage.error('删除失败')
+    ElMessage.error("删除失败");
   }
 }
 
 async function handleBatchDelete() {
   try {
-    await ElMessageBox.confirm(`确定删除选中的 ${selectedIds.value.length} 条留言？`, '批量删除', { type: 'warning' })
+    await ElMessageBox.confirm(
+      `确定删除选中的 ${selectedIds.value.length} 条留言？`,
+      "批量删除",
+      { type: "warning" },
+    );
   } catch {
-    return
+    return;
   }
   try {
-    await batchDeleteMessages(selectedIds.value)
-    ElMessage.success('批量删除成功')
-    selectedIds.value = []
-    fetchMessages()
+    await batchDeleteMessages(selectedIds.value);
+    ElMessage.success("批量删除成功");
+    selectedIds.value = [];
+    fetchMessages();
   } catch {
-    ElMessage.error('批量删除失败')
+    ElMessage.error("批量删除失败");
   }
 }
 
 onMounted(() => {
-  fetchMessages()
-})
+  fetchMessages();
+});
 </script>
 
 <style scoped>

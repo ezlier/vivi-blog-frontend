@@ -49,14 +49,18 @@ export const useAuthStore = defineStore("auth", () => {
     }
   }
 
+  function clearSession() {
+    token.value = "";
+    refreshToken.value = "";
+    username.value = "";
+    clearAuthStorage();
+  }
+
   async function logout() {
     try {
       await logoutApi();
     } finally {
-      token.value = "";
-      refreshToken.value = "";
-      username.value = "";
-      clearAuthStorage();
+      clearSession();
       await router.push("/login");
     }
   }
@@ -68,6 +72,7 @@ export const useAuthStore = defineStore("auth", () => {
     isLoggedIn,
     login,
     updateUser,
+    clearSession,
     logout,
   };
 });

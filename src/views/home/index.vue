@@ -1,10 +1,20 @@
 <template>
   <main class="home-screen" :class="{ 'home-screen--dark': ui.isDark }">
     <HomeAtmosphere :dark="ui.isDark" />
-    <HomeHero :site-name="ui.webSetting?.web_name || 'Vivi Blog'" :name="ui.webSetting?.name || 'Vivi'"
-      :avatar="ui.webSetting?.name_avatar || null" :current-time="currentTime" :current-date-time="currentDateTime"
-      :typing-text="typingText" :navigation-floating="isNavigationFloating" />
-    <HomeContent :about-html="aboutHtml" :article="latestArticle" :loading="articleStore.loading" />
+    <HomeHero
+      :site-name="ui.webSetting?.web_name || 'Vivi Blog'"
+      :name="ui.webSetting?.name || 'Vivi'"
+      :avatar="ui.webSetting?.name_avatar || null"
+      :current-time="currentTime"
+      :current-date-time="currentDateTime"
+      :typing-text="typingText"
+      :navigation-floating="isNavigationFloating"
+    />
+    <HomeContent
+      :about-html="aboutHtml"
+      :article="latestArticle"
+      :loading="articleStore.loading"
+    />
   </main>
 </template>
 
@@ -109,12 +119,12 @@ onUnmounted(() => {
 
 <style scoped>
 .home-screen {
-  --home-bg: #ffffff;
-  --home-text: #19191b;
-  --home-muted: #6f7076;
-  --home-faint: rgba(25, 25, 27, 0.13);
-  --home-line: rgba(25, 25, 27, 0.18);
-  --home-panel: rgba(255, 255, 255, 0.86);
+  --home-bg: #eaf3f8;
+  --home-text: #263b47;
+  --home-muted: #536b78;
+  --home-faint: rgba(58, 85, 99, 0.12);
+  --home-line: rgba(58, 85, 99, 0.2);
+  --home-panel: rgba(239, 247, 250, 0.82);
   position: relative;
   min-height: 100vh;
   min-height: 100svh;

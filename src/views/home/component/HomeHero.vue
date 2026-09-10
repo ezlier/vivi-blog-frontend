@@ -36,8 +36,7 @@ defineProps<{
     </div>
 
     <p class="typing-line" aria-live="polite">
-      <span>{{ typingText }}</span
-      ><span class="typing-cursor" aria-hidden="true" />
+      <span>{{ typingText }}</span><span class="typing-cursor" aria-hidden="true" />
     </p>
 
     <HomeNavigation :floating="navigationFloating" />
@@ -70,6 +69,7 @@ defineProps<{
   font-size: 11px;
   letter-spacing: 0.16em;
   text-transform: uppercase;
+  font-family: Anurati, ui-monospace, SFMono-Regular, Consolas, monospace;
 }
 
 .hero-header__tools {

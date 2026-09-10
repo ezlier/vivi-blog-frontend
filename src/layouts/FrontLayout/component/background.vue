@@ -1,13 +1,11 @@
 <script setup lang="ts">
 import { computed, ref, onMounted, onUnmounted } from 'vue'
 import { useUiStore } from '@/stores/ui'
-import bgImage from '@/assets/img/background.png'
+
 
 const ui = useUiStore()
 
-const lightBgStyle = computed(() => ({
-    backgroundImage: `url(${bgImage})`,
-}))
+
 
 const timestamp = ref('')
 
@@ -29,7 +27,7 @@ onUnmounted(() => {
 
 <template>
     <div class="background-wrapper">
-        <div v-if="!ui.isDark" class="light-bg" :style="lightBgStyle"></div>
+        <div v-if="!ui.isDark" class="light-bg"></div>
         <div v-else class="uiverse-midnight-sky">
             <div class="sky-canvas">
                 <div class="stars stars-1"></div>

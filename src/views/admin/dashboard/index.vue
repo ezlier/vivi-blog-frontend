@@ -20,7 +20,11 @@
             min-width="260"
             show-overflow-tooltip
           />
-          <el-table-column prop="visit_time" label="访问时间" width="180" />
+          <el-table-column label="访问时间" width="180">
+            <template #default="{ row }">
+              {{ formatAdminDateTime(row.visit_time) }}
+            </template>
+          </el-table-column>
           <el-table-column label="操作" width="100" fixed="right">
             <template #default="{ row }">
               <el-button
@@ -73,12 +77,12 @@
           </el-table-column>
           <el-table-column label="有效期" width="180">
             <template #default="{ row }">
-              {{ formatDate(row.expires_at, "永久") }}
+              {{ formatAdminDateTime(row.expires_at, "永久") }}
             </template>
           </el-table-column>
           <el-table-column label="创建时间" width="180">
             <template #default="{ row }">
-              {{ formatDate(row.created_at) }}
+              {{ formatAdminDateTime(row.created_at) }}
             </template>
           </el-table-column>
           <el-table-column label="操作" width="180" fixed="right">
@@ -182,6 +186,7 @@ import {
   getVisitorLogs,
   updateBlacklist,
 } from "@/api/visitor";
+import { formatAdminDateTime } from "@/utils/date";
 
 interface Visitor {
   ip: string;
@@ -265,17 +270,6 @@ async function fetchBlacklists(page = 1) {
   } finally {
     blacklistLoading.value = false;
   }
-}
-
-function formatDate(value: string | null, emptyText = "—") {
-  if (!value) return emptyText;
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return value;
-
-  return new Intl.DateTimeFormat("zh-CN", {
-    dateStyle: "medium",
-    timeStyle: "short",
-  }).format(date);
 }
 
 function openBlacklistDialog(ip = "") {

@@ -2,7 +2,11 @@
   <div class="page admin-comments">
     <div class="page-header">
       <h1>评论管理</h1>
-      <el-button type="danger" :disabled="selectedIds.length === 0" @click="handleBatchDelete">
+      <el-button
+        type="danger"
+        :disabled="selectedIds.length === 0"
+        @click="handleBatchDelete"
+      >
         批量删除 ({{ selectedIds.length }})
       </el-button>
     </div>
@@ -15,16 +19,37 @@
       @selection-change="onSelectionChange"
     >
       <el-table-column type="selection" width="44" />
-      <el-table-column prop="text" label="评论内容" min-width="240" show-overflow-tooltip />
+      <el-table-column
+        prop="text"
+        label="评论内容"
+        min-width="240"
+        show-overflow-tooltip
+      />
       <el-table-column prop="name" label="昵称" width="120" />
       <el-table-column prop="ip" label="IP" width="140" />
-      <el-table-column prop="time" label="时间" width="170" />
+      <el-table-column label="时间" width="170">
+        <template #default="{ row }">
+          {{ formatAdminDateTime(row.time) }}
+        </template>
+      </el-table-column>
       <el-table-column prop="QQ" label="QQ" width="120" />
-      <el-table-column prop="email" label="Email" width="180" show-overflow-tooltip />
-      <el-table-column prop="article" label="所属文章" min-width="180" show-overflow-tooltip />
+      <el-table-column
+        prop="email"
+        label="Email"
+        width="180"
+        show-overflow-tooltip
+      />
+      <el-table-column
+        prop="article"
+        label="所属文章"
+        min-width="180"
+        show-overflow-tooltip
+      />
       <el-table-column label="操作" width="100" fixed="right">
         <template #default="{ row }">
-          <el-button size="small" type="danger" @click="handleDelete(row.id)">删除</el-button>
+          <el-button size="small" type="danger" @click="handleDelete(row.id)"
+            >删除</el-button
+          >
         </template>
       </el-table-column>
     </el-table>
@@ -32,94 +57,105 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
-import { getAdminComments, deleteComment, batchDeleteComments } from '@/api/comment'
-import { ElMessage, ElMessageBox } from 'element-plus'
+import { ref, onMounted } from "vue";
+import {
+  getAdminComments,
+  deleteComment,
+  batchDeleteComments,
+} from "@/api/comment";
+import { ElMessage, ElMessageBox } from "element-plus";
+import { formatAdminDateTime } from "@/utils/date";
 
 interface CommentItem {
-  id: number
-  text: string
-  name: string
-  ip: string
-  time: string
-  QQ?: string
-  email?: string
-  article?: string
+  id: number;
+  text: string;
+  name: string;
+  ip: string;
+  time: string;
+  QQ?: string;
+  email?: string;
+  article?: string;
 }
 
-const comments = ref<CommentItem[]>([])
-const loading = ref(false)
-const selectedIds = ref<number[]>([])
+const comments = ref<CommentItem[]>([]);
+const loading = ref(false);
+const selectedIds = ref<number[]>([]);
 
 function onSelectionChange(rows: CommentItem[]) {
-  selectedIds.value = rows.map((r) => r.id)
+  selectedIds.value = rows.map((r) => r.id);
 }
 
 async function fetchComments() {
-  loading.value = true
+  loading.value = true;
   try {
-    const res = await getAdminComments()
-    const payload = res.data.data.comments
-    comments.value = payload.items.map((comment: {
-      id: number
-      IP: string
-      nickname: string
-      email?: string
-      QQ?: string
-      content: string
-      article_title?: string
-      created_at: string
-    }) => ({
-      id: comment.id,
-      text: comment.content,
-      name: comment.nickname,
-      ip: comment.IP,
-      time: comment.created_at,
-      QQ: comment.QQ,
-      email: comment.email,
-      article: comment.article_title,
-    }))
+    const res = await getAdminComments();
+    const payload = res.data.data.comments;
+    comments.value = payload.items.map(
+      (comment: {
+        id: number;
+        IP: string;
+        nickname: string;
+        email?: string;
+        QQ?: string;
+        content: string;
+        article_title?: string;
+        created_at: string;
+      }) => ({
+        id: comment.id,
+        text: comment.content,
+        name: comment.nickname,
+        ip: comment.IP,
+        time: comment.created_at,
+        QQ: comment.QQ,
+        email: comment.email,
+        article: comment.article_title,
+      }),
+    );
   } catch {
-    ElMessage.error('获取评论列表失败')
+    ElMessage.error("获取评论列表失败");
   } finally {
-    loading.value = false
+    loading.value = false;
   }
 }
 
 async function handleDelete(id: number) {
   try {
-    await ElMessageBox.confirm('确定删除该评论？', '提示', { type: 'warning' })
+    await ElMessageBox.confirm("确定删除该评论？", "提示", { type: "warning" });
   } catch {
-    return
+    return;
   }
   try {
-    await deleteComment(id)
-    ElMessage.success('删除成功')
-    fetchComments()
+    await deleteComment(id);
+    ElMessage.success("删除成功");
+    fetchComments();
   } catch {
-    ElMessage.error('删除失败')
+    ElMessage.error("删除失败");
   }
 }
 
 async function handleBatchDelete() {
   try {
-    await ElMessageBox.confirm(`确定删除选中的 ${selectedIds.value.length} 条评论？`, '批量删除', { type: 'warning' })
+    await ElMessageBox.confirm(
+      `确定删除选中的 ${selectedIds.value.length} 条评论？`,
+      "批量删除",
+      { type: "warning" },
+    );
   } catch {
-    return
+    return;
   }
   try {
-    await batchDeleteComments(selectedIds.value)
-    ElMessage.success('批量删除成功')
-    selectedIds.value = []
-    fetchComments()
+    await batchDeleteComments(selectedIds.value);
+    ElMessage.success("批量删除成功");
+    selectedIds.value = [];
+    fetchComments();
   } catch {
-    ElMessage.error('批量删除失败')
+    ElMessage.error("批量删除失败");
   }
 }
 
 onMounted(() => {
-  fetchComments()
-})
+  fetchComments();
+});
 </script>
 
 <style scoped>

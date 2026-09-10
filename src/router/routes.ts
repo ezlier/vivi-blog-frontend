@@ -54,7 +54,6 @@ const routes: RouteRecordRaw[] = [
         name: "Essay",
         components: {
           default: EssayView,
-          sidebar: CommonSidebar,
         },
       },
       {

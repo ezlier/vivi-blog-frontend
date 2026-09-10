@@ -40,7 +40,7 @@
       </el-table-column>
       <el-table-column label="创建时间" width="180">
         <template #default="{ row }">
-          {{ formatDate(row.created_at) }}
+          {{ formatAdminDateTime(row.created_at) }}
         </template>
       </el-table-column>
       <el-table-column label="操作" width="100" fixed="right">
@@ -71,6 +71,7 @@ import Pagination from "@/components/Pagination.vue";
 import { batchDeleteEssays } from "@/api/essay";
 import { useEssayStore } from "@/stores/essay";
 import type { Essay } from "@/types";
+import { formatAdminDateTime } from "@/utils/date";
 
 const essayStore = useEssayStore();
 const page = ref(essayStore.currentPage);
@@ -84,16 +85,6 @@ function onSelectionChange(rows: Essay[]) {
 function previewContent(content: string) {
   const text = content.replace(/\s+/g, " ").trim();
   return text.length > 100 ? `${text.slice(0, 100)}…` : text || "暂无内容";
-}
-
-function formatDate(value: string) {
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return value;
-
-  return new Intl.DateTimeFormat("zh-CN", {
-    dateStyle: "medium",
-    timeStyle: "short",
-  }).format(date);
 }
 
 async function loadPage(targetPage: number) {

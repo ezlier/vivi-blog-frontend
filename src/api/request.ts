@@ -18,6 +18,7 @@ const api = axios.create({
 
 type RetryableRequestConfig = InternalAxiosRequestConfig & {
   _retry?: boolean;
+  silent?: boolean;
 };
 
 interface RefreshResponse {
@@ -71,6 +72,10 @@ function redirectToLogin() {
   }
 }
 
+function isSilentRequest(config?: RetryableRequestConfig) {
+  return config?.silent === true;
+}
+
 // 自动附加当前 access_token。
 api.interceptors.request.use(
   (config) => {
@@ -88,7 +93,9 @@ api.interceptors.response.use(
     const data = response.data;
     if (data?.code && data.code >= 400) {
       const message = data.message || data.msg || "请求失败";
-      ElMessage.error(message);
+      if (!isSilentRequest(response.config as RetryableRequestConfig)) {
+        ElMessage.error(message);
+      }
       return Promise.reject(new Error(message));
     }
     return response;
@@ -113,6 +120,10 @@ api.interceptors.response.use(
         clearAuthStorage();
         redirectToLogin();
       }
+    }
+
+    if (isSilentRequest(originalRequest)) {
+      return Promise.reject(error);
     }
 
     if (!error.response) {
