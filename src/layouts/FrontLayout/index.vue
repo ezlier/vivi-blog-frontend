@@ -2,7 +2,7 @@
   <div class="front-layout">
     <SplashScreen ref="splashRef" />
     <PageTransition />
-    <Background />
+    <HomeAtmosphere :dark="ui.isDark" />
     <Dock />
 
     <Navbar />
@@ -32,15 +32,15 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, computed, ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import { useUiStore } from '@/stores/ui'
 import { useRoute } from 'vue-router'
 import Navbar from './component/navbar.vue'
 import Footer from './component/footer.vue'
-import Background from './component/background.vue'
 import Dock from './component/dock.vue'
 import SplashScreen from '@/components/SplashScreen.vue'
 import PageTransition from '@/components/PageTransition.vue'
+import HomeAtmosphere from '@/views/home/component/HomeAtmosphere.vue'
 
 const ui = useUiStore()
 
@@ -55,6 +55,20 @@ onMounted(async () => {
 </script>
 
 <style scoped>
+.front-layout {
+  position: relative;
+  isolation: isolate;
+  min-height: 100vh;
+  background-color: #1c1c1e;
+}
+
+.head,
+.front-main,
+.footer {
+  position: relative;
+  z-index: 1;
+}
+
 .head {
   height: 300px;
   display: flex;

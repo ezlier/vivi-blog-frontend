@@ -24,7 +24,7 @@ const AdminDashboard = () => import("@/views/admin/dashboard/index.vue");
 const AdminArticles = () => import("@/views/admin/articles/index.vue");
 const AdminArticleEdit = () => import("@/views/admin/article-edit/index.vue");
 const AdminEssays = () => import("@/views/admin/essays/index.vue");
-const AdminEssayCreate = () => import("@/views/admin/essay-create/index.vue");
+const AdminEssayEditor = () => import("@/views/admin/essay-create/index.vue");
 const AdminComments = () => import("@/views/admin/comments/index.vue");
 const AdminMessages = () => import("@/views/admin/message/index.vue");
 const AdminTags = () => import("@/views/admin/tags/index.vue");
@@ -54,6 +54,7 @@ const routes: RouteRecordRaw[] = [
         name: "Essay",
         components: {
           default: EssayView,
+          sidebar: CommonSidebar,
         },
       },
       {
@@ -104,7 +105,12 @@ const routes: RouteRecordRaw[] = [
       {
         path: "essay/create",
         name: "AdminEssayCreate",
-        component: AdminEssayCreate,
+        component: AdminEssayEditor,
+      },
+      {
+        path: "essay/edit/:slug",
+        name: "AdminEssayEdit",
+        component: AdminEssayEditor,
       },
       { path: "comments", name: "AdminComments", component: AdminComments },
       { path: "message", name: "AdminMessages", component: AdminMessages },

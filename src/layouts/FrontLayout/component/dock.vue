@@ -3,7 +3,6 @@ import { ref, onMounted, onUnmounted } from 'vue'
 import ThemeButton from '@/components/ThemeButton.vue'
 import BackButton from '@/components/BackButton.vue'
 import ToTopButton from '@/components/ToTopButton.vue'
-import ToAdminButton from '@/components/ToAdmin.vue'
 
 const visible = ref(false)
 
@@ -29,7 +28,6 @@ onUnmounted(() => {
         <ToTopButton class="dock-btn" />
         <BackButton class="dock-btn" />
         <ThemeButton class="dock-btn" />
-        <ToAdminButton class="dock-btn" />
     </div>
 </template>
 
@@ -42,7 +40,7 @@ onUnmounted(() => {
     display: grid;
     place-items: center;
     gap: 10px;
-    /* z-index: 1000; */
+    z-index: 10;
     transition: right 0.3s ease;
 }
 

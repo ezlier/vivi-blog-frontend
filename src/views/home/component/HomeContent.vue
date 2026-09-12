@@ -101,7 +101,7 @@ function formatDate(value: string) {
   display: block;
   margin-bottom: 5px;
   color: var(--home-muted);
-  font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+  font-family: Anurati, SFMono-Regular, Consolas, monospace;
   font-size: 11px;
   letter-spacing: 0.18em;
 }

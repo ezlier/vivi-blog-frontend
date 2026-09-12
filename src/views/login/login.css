@@ -1,0 +1,401 @@
+.login-console {
+  --login-ink: #161616;
+  --login-paper: #f4f1e8;
+  --login-surface: rgb(255 254 250 / 0.82);
+  --login-muted: #6d6b65;
+  --login-rule: rgb(22 22 22 / 0.2);
+  --login-rule-strong: rgb(22 22 22 / 0.62);
+  --login-signal: #2f80ed;
+  --login-state: #00a66a;
+  --login-danger: #ba3d3d;
+  --login-display: "LXGWWenKai", "Noto Sans SC", "PingFang SC", sans-serif;
+  --login-mono: "LXGWWenKai", "SFMono-Regular", Consolas, monospace;
+
+  position: relative;
+  min-height: 100dvh;
+  overflow: hidden;
+  background:
+    linear-gradient(rgb(22 22 22 / 0.055) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(22 22 22 / 0.055) 1px, transparent 1px),
+    var(--login-paper);
+  background-size: 64px 64px;
+  color: var(--login-ink);
+  font-family: var(--login-display);
+}
+
+.login-console.is-dark {
+  --login-ink: #f2f1eb;
+  --login-paper: #090a0b;
+  --login-surface: rgb(20 21 22 / 0.88);
+  --login-muted: #a7a8a1;
+  --login-rule: rgb(245 245 235 / 0.16);
+  --login-rule-strong: rgb(245 245 235 / 0.64);
+  --login-signal: #e6ff00;
+  --login-state: #3ade8d;
+  --login-danger: #ff8585;
+
+  background-image:
+    linear-gradient(rgb(245 245 235 / 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(245 245 235 / 0.045) 1px, transparent 1px);
+}
+
+.login-console__topbar {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 72px;
+  gap: 18px;
+  padding: 0 32px;
+  border-bottom: 1px solid var(--login-rule);
+  background: color-mix(in srgb, var(--login-paper), transparent 7%);
+}
+
+.login-console__brand,
+.login-console__utilities,
+.login-console__utility {
+  display: flex;
+  align-items: center;
+}
+
+.login-console__brand {
+  gap: 12px;
+}
+
+.login-console__mark {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border: 1px solid currentColor;
+  color: var(--login-signal);
+  font-family: var(--login-mono);
+  font-size: 17px;
+  font-weight: 800;
+}
+
+.login-console__brand-copy {
+  display: flex;
+  flex-direction: column;
+}
+
+.login-console__brand-copy strong {
+  font-size: 18px;
+  line-height: 1.2;
+}
+
+.login-console__brand-copy small,
+.login-console__utility,
+.login-console__kicker,
+.login-console__meta,
+.login-console__footer {
+  color: var(--login-muted);
+  font-family: var(--login-mono);
+  font-size: 11px;
+}
+
+.login-console__utilities {
+  gap: 12px;
+}
+
+.login-console__utility {
+  gap: 7px;
+}
+
+.login-console__state-dot {
+  width: 8px;
+  height: 8px;
+  background: var(--login-state);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--login-state), transparent 76%);
+}
+
+.login-console__theme {
+  display: inline-grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border: 1px solid var(--login-rule);
+  background: transparent;
+  color: var(--login-ink);
+  cursor: pointer;
+  transition:
+    background-color 180ms ease,
+    border-color 180ms ease,
+    color 180ms ease;
+}
+
+.login-console__theme:hover {
+  border-color: var(--login-rule-strong);
+  background: color-mix(in srgb, var(--login-signal), transparent 90%);
+  color: var(--login-signal);
+}
+
+.login-console__theme:focus-visible,
+.console-login-form__control:focus-within,
+.console-login-form__submit:focus-visible {
+  outline: 2px solid var(--login-signal);
+  outline-offset: 2px;
+}
+
+.login-console__stage {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(320px, 0.75fr);
+  align-items: center;
+  min-height: calc(100dvh - 120px);
+  gap: clamp(36px, 8vw, 144px);
+  padding: clamp(40px, 8vw, 120px) clamp(24px, 8vw, 132px);
+}
+
+.login-console__stage::before {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 52%;
+  width: 1px;
+  background: var(--login-rule);
+  content: "";
+}
+
+.login-console__intro {
+  position: relative;
+  max-width: 700px;
+}
+
+.login-console__intro::before {
+  display: block;
+  width: 48px;
+  height: 4px;
+  margin-bottom: 16px;
+  background: var(--login-signal);
+  content: "";
+}
+
+.login-console__kicker {
+  margin: 0 0 14px;
+}
+
+.login-console__intro h1 {
+  max-width: 8em;
+  margin: 0;
+  font-size: clamp(48px, 8vw, 112px);
+  font-weight: 900;
+  line-height: 0.98;
+  text-wrap: balance;
+}
+
+.login-console__intro p {
+  max-width: 34rem;
+  margin: 24px 0 0;
+  color: var(--login-muted);
+  font-size: 16px;
+  line-height: 1.8;
+}
+
+.login-console__meta {
+  display: flex;
+  gap: 16px;
+  margin-top: 40px;
+}
+
+.login-console__panel {
+  position: relative;
+  width: min(100%, 430px);
+  justify-self: end;
+  padding: 28px;
+  border: 1px solid var(--login-rule-strong);
+  background: var(--login-surface);
+  box-shadow: 12px 12px 0 color-mix(in srgb, var(--login-ink), transparent 94%);
+}
+
+.login-console__panel-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--login-rule);
+}
+
+.login-console__panel-head h2 {
+  margin: 5px 0 0;
+  font-size: 24px;
+  line-height: 1.2;
+}
+
+.login-console__panel-code {
+  color: var(--login-signal);
+  font-family: var(--login-mono);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+
+.console-login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding-top: 24px;
+}
+
+.console-login-form__field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.console-login-form__field label {
+  color: var(--login-ink);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.console-login-form__control {
+  display: flex;
+  align-items: center;
+  min-height: 48px;
+  gap: 10px;
+  padding: 0 14px;
+  border: 1px solid var(--login-rule-strong);
+  background: color-mix(in srgb, var(--login-paper), transparent 30%);
+  color: var(--login-muted);
+  transition:
+    border-color 180ms ease,
+    color 180ms ease;
+}
+
+.console-login-form__control:focus-within {
+  border-color: var(--login-signal);
+  color: var(--login-signal);
+}
+
+.console-login-form__control input {
+  min-width: 0;
+  width: 100%;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--login-ink);
+  font: inherit;
+  font-size: 16px;
+}
+
+.console-login-form__control input::placeholder {
+  color: color-mix(in srgb, var(--login-muted), transparent 26%);
+}
+
+.console-login-form__error {
+  margin: -4px 0 0;
+  color: var(--login-danger);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.console-login-form__submit {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 50px;
+  margin-top: 4px;
+  padding: 0 16px;
+  border: 1px solid var(--login-signal);
+  background: var(--login-signal);
+  color: #101010;
+  cursor: pointer;
+  font: inherit;
+  font-size: 15px;
+  font-weight: 800;
+  transition:
+    background-color 180ms ease,
+    border-color 180ms ease,
+    opacity 180ms ease;
+}
+
+.console-login-form__submit:hover:not(:disabled) {
+  border-color: var(--login-ink);
+  background: color-mix(in srgb, var(--login-signal), #fff 14%);
+}
+
+.console-login-form__submit:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.login-console__footer {
+  position: absolute;
+  right: 32px;
+  bottom: 18px;
+  left: 32px;
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding-top: 14px;
+  border-top: 1px solid var(--login-rule);
+}
+
+@media (max-width: 820px) {
+  .login-console__stage {
+    grid-template-columns: 1fr;
+    align-content: center;
+    min-height: auto;
+    padding: 56px 24px 112px;
+  }
+
+  .login-console__stage::before {
+    display: none;
+  }
+
+  .login-console__intro {
+    max-width: 600px;
+  }
+
+  .login-console__panel {
+    width: min(100%, 520px);
+    justify-self: start;
+  }
+}
+
+@media (max-width: 560px) {
+  .login-console__topbar {
+    min-height: 60px;
+    padding: 0 16px;
+  }
+
+  .login-console__brand-copy small,
+  .login-console__utility span {
+    display: none;
+  }
+
+  .login-console__stage {
+    gap: 40px;
+    padding: 44px 16px 96px;
+  }
+
+  .login-console__intro h1 {
+    font-size: clamp(46px, 16vw, 68px);
+  }
+
+  .login-console__intro p {
+    font-size: 15px;
+  }
+
+  .login-console__panel {
+    padding: 20px;
+    box-shadow: 8px 8px 0 color-mix(in srgb, var(--login-ink), transparent 94%);
+  }
+
+  .login-console__footer {
+    right: 16px;
+    bottom: 14px;
+    left: 16px;
+    font-size: 10px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .login-console__theme,
+  .console-login-form__control,
+  .console-login-form__submit {
+    transition: none;
+  }
+}

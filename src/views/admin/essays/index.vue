@@ -43,8 +43,11 @@
           {{ formatAdminDateTime(row.created_at) }}
         </template>
       </el-table-column>
-      <el-table-column label="操作" width="100" fixed="right">
+      <el-table-column label="操作" width="160" fixed="right">
         <template #default="{ row }">
+          <el-button size="small" @click="handleEdit(row.slug)">
+            编辑
+          </el-button>
           <el-button size="small" type="danger" @click="handleDelete(row.slug)">
             删除
           </el-button>
@@ -66,6 +69,7 @@
 
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
+import { useRouter } from "vue-router";
 import { ElMessage, ElMessageBox } from "element-plus";
 import Pagination from "@/components/Pagination.vue";
 import { batchDeleteEssays } from "@/api/essay";
@@ -74,6 +78,7 @@ import type { Essay } from "@/types";
 import { formatAdminDateTime } from "@/utils/date";
 
 const essayStore = useEssayStore();
+const router = useRouter();
 const page = ref(essayStore.currentPage);
 const pageSize = 10;
 const selectedSlugs = ref<string[]>([]);
@@ -85,6 +90,10 @@ function onSelectionChange(rows: Essay[]) {
 function previewContent(content: string) {
   const text = content.replace(/\s+/g, " ").trim();
   return text.length > 100 ? `${text.slice(0, 100)}…` : text || "暂无内容";
+}
+
+function handleEdit(slug: string) {
+  void router.push(`/admin/essay/edit/${slug}`);
 }
 
 async function loadPage(targetPage: number) {

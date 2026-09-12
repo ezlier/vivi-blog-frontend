@@ -16,16 +16,14 @@ const stars = Array.from({ length: 24 }, (_, index) => ({
   delay: (index * 0.8) % 5,
 }));
 
-const snowflakes = Array.from({ length: 18 }, (_, index) => ({
+const snowflakes = Array.from({ length: 12 }, (_, index) => ({
   id: index,
-  left: `${(index * 37 + 9) % 96}%`,
-  delay: -((index * 1.7) % 14),
-  duration: 12 + (index % 6) * 2,
-  drift: (index % 2 === 0 ? 1 : -1) * (18 + (index % 5) * 8),
-  size: 3 + (index % 3),
+  left: `${Math.round(Math.random() * 96) + 2}%`,
+  delay: -(Math.random() * 16),
+  duration: 16 + Math.random() * 8,
+  drift: Math.round((Math.random() - 0.5) * 42),
+  size: Math.round((2.5 + Math.random() * 2) * 10) / 10,
 }));
-
-
 </script>
 
 <template>
@@ -58,18 +56,14 @@ const snowflakes = Array.from({ length: 18 }, (_, index) => ({
 
     <div v-else class="winter-scene">
       <div class="winter-light" />
-      <div class="mist mist--back" />
-      <div class="mist mist--front" />
 
-      <div class="snow-field">
-        <i v-for="flake in snowflakes" :key="flake.id" class="snowflake" :style="{
-          '--snow-left': flake.left,
-          '--snow-delay': `${flake.delay}s`,
-          '--snow-duration': `${flake.duration}s`,
-          '--snow-drift': `${flake.drift}px`,
-          '--snow-size': `${flake.size}px`,
-        }" />
-      </div>
+      <i v-for="flake in snowflakes" :key="flake.id" class="snowflake" :style="{
+        '--snow-left': flake.left,
+        '--snow-delay': `${flake.delay}s`,
+        '--snow-duration': `${flake.duration}s`,
+        '--snow-drift': `${flake.drift}px`,
+        '--snow-size': `${flake.size}px`,
+      }" />
     </div>
   </div>
 </template>
@@ -78,62 +72,42 @@ const snowflakes = Array.from({ length: 18 }, (_, index) => ({
 .home-atmosphere,
 .lantern-field,
 .home-stars,
-.winter-scene,
-.snow-field {
+.winter-scene {
   position: fixed;
   inset: 0;
-  z-index: 1;
   overflow: hidden;
   pointer-events: none;
 }
 
+.home-atmosphere {
+  z-index: 0;
+}
+
+.lantern-field,
+.home-stars {
+  z-index: 1;
+}
+
 .winter-scene {
-  background: linear-gradient(180deg,
-      #769fcd 0%,
-      #b9bbdf 42%,
-      #dde7f2 86%,
-      #dff4f3 100%);
+  background: linear-gradient(180deg, #7899bd 0%, #8da9c5 44%, #afbbcf 100%);
 }
 
 .winter-light {
   position: absolute;
-  top: -12%;
-  left: 54%;
-  width: min(72vw, 980px);
-  aspect-ratio: 1.4;
+  top: -7%;
+  left: 57%;
+  width: min(58vw, 860px);
+  aspect-ratio: 1.7;
   border-radius: 50%;
-  background: rgba(255, 250, 226, 0.72);
-  filter: blur(72px);
-  opacity: 0.8;
-  transform: translateX(-50%);
-}
-
-.mist {
-  position: absolute;
-  left: -15%;
-  width: 130%;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.58);
-  filter: blur(28px);
-}
-
-.mist--back {
-  bottom: 12%;
-  height: 25%;
+  background: rgba(245, 207, 186, 0.46);
+  filter: blur(60px);
   opacity: 0.72;
-  animation: mist-drift 24s ease-in-out infinite alternate;
-}
-
-.mist--front {
-  bottom: -5%;
-  height: 24%;
-  background: rgba(231, 240, 244, 0.8);
-  filter: blur(36px);
-  animation: mist-drift 30s ease-in-out -10s infinite alternate-reverse;
+  transform: translateX(-50%);
 }
 
 .snowflake {
   position: absolute;
+  z-index: 8;
   top: -16px;
   left: var(--snow-left);
   width: var(--snow-size);
@@ -144,8 +118,6 @@ const snowflakes = Array.from({ length: 18 }, (_, index) => ({
   opacity: 0;
   animation: snow-fall var(--snow-duration) linear var(--snow-delay) infinite;
 }
-
-
 
 .lantern {
   position: absolute;
@@ -306,26 +278,6 @@ const snowflakes = Array.from({ length: 18 }, (_, index) => ({
   }
 }
 
-@keyframes tree-sway {
-  from {
-    transform: scale(var(--tree-scale)) rotate(-0.8deg);
-  }
-
-  to {
-    transform: scale(var(--tree-scale)) rotate(0.8deg);
-  }
-}
-
-@keyframes mist-drift {
-  from {
-    transform: translateX(-2%);
-  }
-
-  to {
-    transform: translateX(2%);
-  }
-}
-
 @media (max-width: 760px) {
   .lantern {
     width: 31px;
@@ -337,23 +289,13 @@ const snowflakes = Array.from({ length: 18 }, (_, index) => ({
     height: 37px;
   }
 
-  .forest {
-    bottom: -88px;
-    height: 118px;
-  }
-
-  .tree {
-    bottom: 0;
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {
 
   .lantern,
   .home-star,
-  .snowflake,
-  .tree,
-  .mist {
+  .snowflake {
     animation: none;
   }
 }
