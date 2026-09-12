@@ -22,7 +22,7 @@
       </div>
       <div class="article-info-card__stat">
         <span class="stat-icon">最后更新</span>
-        <span>{{ daysAgo }}</span>
+        <span>{{ updatedAt }}</span>
       </div>
       <div class="article-info-card__stat">
         <span class="stat-icon">点赞</span>
@@ -35,6 +35,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import type { Article } from '@/stores/article'
+import { formatAdminDateTime } from '@/utils/date'
 
 const props = defineProps<{
   article: Article | null
@@ -48,14 +49,8 @@ const wordCount = computed(() => {
   return clean.length
 })
 
-const daysAgo = computed(() => {
-  if (!props.article?.updated_at) return ''
-  const updated = new Date(props.article.updated_at)
-  const now = new Date()
-  const diff = Math.floor((now.getTime() - updated.getTime()) / (1000 * 60 * 60 * 24))
-  if (diff === 0) return '今天更新'
-  if (diff === 1) return '昨天更新'
-  return `${diff} 天前更新`
+const updatedAt = computed(() => {
+  return formatAdminDateTime(props.article?.updated_at, '')
 })
 </script>
 

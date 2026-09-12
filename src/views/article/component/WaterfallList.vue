@@ -1,7 +1,21 @@
 <template>
-  <div class="waterfall">
-    <div v-for="(article, index) in visibleArticles" :key="article.slug" class="waterfall__item">
-      <ArticleCard :article="article" :style="{ animationDelay: `${index * 0.06}s` }" />
+  <div class="waterfall waterfall--desktop">
+    <div v-for="(column, columnIndex) in columns" :key="columnIndex" class="waterfall__column">
+      <div v-for="item in column" :key="item.article.slug" class="waterfall__item">
+        <ArticleCard
+          :article="item.article"
+          :style="{ animationDelay: `${item.index * 0.06}s` }"
+        />
+      </div>
+    </div>
+  </div>
+
+  <div class="waterfall waterfall--mobile">
+    <div v-for="item in indexedArticles" :key="item.article.slug" class="waterfall__item">
+      <ArticleCard
+        :article="item.article"
+        :style="{ animationDelay: `${item.index * 0.06}s` }"
+      />
     </div>
   </div>
 </template>
@@ -16,31 +30,55 @@ const props = defineProps<{
 }>()
 
 const visibleArticles = computed(() => props.articles.slice(0, 10))
+const indexedArticles = computed(() =>
+  visibleArticles.value.map((article, index) => ({ article, index })),
+)
+
+const columns = computed(() => {
+  const items = indexedArticles.value
+  const left = items.filter((_, index) => index % 2 === 0)
+  const right = items.filter((_, index) => index % 2 === 1)
+
+  return [left, right]
+})
 </script>
 
 <style scoped>
 .waterfall {
   width: 100%;
-  column-count: 2;
-  column-gap: 20px;
+  display: flex;
+  gap: 20px;
+}
+
+.waterfall__column {
+  display: flex;
+  flex: 1 1 0;
+  min-width: 0;
+  flex-direction: column;
+  gap: 20px;
 }
 
 .waterfall__item {
   width: 100%;
-  margin-bottom: 20px;
-  break-inside: avoid;
-  page-break-inside: avoid;
-  -webkit-column-break-inside: avoid;
+}
+
+.waterfall--mobile {
+  display: none;
 }
 
 @media (max-width: 768px) {
-  .waterfall {
-    column-count: 1;
-    column-gap: 0;
+  .waterfall--desktop {
+    display: none;
   }
 
-  .waterfall__item {
-    margin-bottom: 16px;
+  .waterfall--mobile {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .waterfall--mobile .waterfall__item {
+    width: 100%;
   }
 }
 </style>

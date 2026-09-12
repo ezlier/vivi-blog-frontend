@@ -4,7 +4,9 @@
     <header class="article-header">
       <div class="article-title">{{ article.title }}</div>
       <div class="article-meta">
-        <span class="article-date">{{ article.created_time }}</span>
+        <span class="article-date">
+          {{ formatAdminDateTime(article.created_time) }}
+        </span>
       </div>
     </header>
 
@@ -48,6 +50,7 @@ import MarkdownIt from "markdown-it";
 import hljs from "highlight.js";
 import "highlight.js/styles/github-dark.css";
 import { createHeadingId } from "@/utils/markdownHeadings";
+import { formatAdminDateTime } from "@/utils/date";
 
 const route = useRoute();
 const articleStore = useArticleStore();

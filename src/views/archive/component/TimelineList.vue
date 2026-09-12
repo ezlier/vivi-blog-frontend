@@ -19,7 +19,9 @@
           :to="`/article/${post.slug}`"
           class="timeline-item"
         >
-          <div class="timeline-date">{{ formatDate(post.created_time) }}</div>
+          <div class="timeline-date">
+            {{ formatAdminDateTime(post.created_time) }}
+          </div>
 
           <div class="timeline-dot-line">
             <div class="timeline-dot"></div>
@@ -44,6 +46,7 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import type { Article } from "@/stores/article";
+import { formatAdminDateTime } from "@/utils/date";
 
 const props = defineProps<{
   articles: Article[];
@@ -68,12 +71,6 @@ const groupedArticles = computed(() => {
     }));
 });
 
-function formatDate(date: string) {
-  const d = new Date(date);
-  const m = (d.getMonth() + 1).toString().padStart(2, "0");
-  const day = d.getDate().toString().padStart(2, "0");
-  return `${m}-${day}`;
-}
 </script>
 
 <style scoped>

@@ -13,7 +13,7 @@
         <h2 class="essay-card__title">{{ essay.title }}</h2>
         <p class="essay-card__excerpt">{{ excerpt || "暂无内容" }}</p>
         <time class="essay-card__date essay-card__date--summary" :datetime="essay.created_at">
-          {{ formatDate(essay.created_at) }}
+          {{ formatAdminDateTime(essay.created_at) }}
         </time>
       </div>
 
@@ -37,7 +37,7 @@
         <div v-else class="essay-card__images-placeholder">暂无图片</div>
 
         <time class="essay-card__date essay-card__date--expanded" :datetime="essay.created_at">
-          {{ formatDate(essay.created_at) }}
+          {{ formatAdminDateTime(essay.created_at) }}
         </time>
       </div>
     </div>
@@ -56,6 +56,7 @@
 <script setup lang="ts">
 import { computed, nextTick, onMounted, onUnmounted, ref, watch } from "vue";
 import type { Essay } from "@/types";
+import { formatAdminDateTime } from "@/utils/date";
 
 defineOptions({ name: "EssayCard" });
 
@@ -74,17 +75,6 @@ const excerpt = computed(() => {
   const text = props.essay.content.trim().replace(/\s+/g, " ");
   return text.length > 90 ? `${text.slice(0, 90)}…` : text;
 });
-
-function formatDate(value: string) {
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return value;
-
-  return new Intl.DateTimeFormat("zh-CN", {
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-  }).format(date);
-}
 
 function updateExpandedHeight() {
   expandedHeight.value = expandedContent.value?.scrollHeight ?? 0;

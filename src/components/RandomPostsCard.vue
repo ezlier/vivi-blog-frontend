@@ -51,13 +51,6 @@ const list = computed(() => {
   return all.slice(0, 3);
 });
 
-function formatDate(date: string) {
-  const d = new Date(date);
-  const m = (d.getMonth() + 1).toString().padStart(2, "0");
-  const day = d.getDate().toString().padStart(2, "0");
-  return `${m}-${day}`;
-}
-
 onMounted(async () => {
   if (!articleStore.articleList.length) {
     await articleStore.fetchAllArticles();

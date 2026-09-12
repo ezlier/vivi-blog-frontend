@@ -21,7 +21,7 @@
             <span class="comment-item__name">{{ item.name }}</span>
             <span class="comment-item__time">
               <time class="essay-card__date essay-card__date--expanded" :datetime="item.time">
-                {{ formatDate(item.time) }}
+                {{ formatAdminDateTime(item.time) }}
               </time>
             </span>
           </div>
@@ -38,6 +38,7 @@
 import { ref } from 'vue'
 import { ElMessage } from 'element-plus'
 import CommentForm from './CommentForm.vue'
+import { formatAdminDateTime } from '@/utils/date'
 
 interface CommentItem {
   id: number | string
@@ -69,16 +70,6 @@ async function handleSubmit(data: { name: string; text: string; QQ?: string; ema
   }
 }
 
-function formatDate(value: string) {
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return value;
-
-  return new Intl.DateTimeFormat("zh-CN", {
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-  }).format(date);
-}
 </script>
 
 <style scoped>

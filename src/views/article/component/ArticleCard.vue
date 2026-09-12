@@ -19,7 +19,9 @@
 
       </div>
 
-      <span class="card__date">{{ article.created_at }}</span>
+      <span class="card__date">
+        {{ formatAdminDateTime(article.created_at) }}
+      </span>
 
       <div class="card__action">
         <span class="card__read-btn">
@@ -34,6 +36,7 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
 import type { Article } from '@/stores/article'
+import { formatAdminDateTime } from '@/utils/date'
 
 const props = defineProps<{
   article: Article

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { Article } from "@/stores/article";
+import { formatAdminDateTime } from "@/utils/date";
 
 defineProps<{
   aboutHtml: string;
@@ -7,16 +8,6 @@ defineProps<{
   loading: boolean;
 }>();
 
-function formatDate(value: string) {
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return value;
-
-  return new Intl.DateTimeFormat("zh-CN", {
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-  }).format(date);
-}
 </script>
 
 <template>
@@ -45,7 +36,7 @@ function formatDate(value: string) {
         <RouterLink v-else-if="article" :to="`/article/${article.slug}`" class="latest-article">
           <div class="latest-article__content">
             <time :datetime="article.created_at">{{
-              formatDate(article.created_time)
+              formatAdminDateTime(article.created_time)
               }}</time>
             <h3>{{ article.title }}</h3>
             <span class="latest-article__read">阅读文章 <span aria-hidden="true">↗</span></span>

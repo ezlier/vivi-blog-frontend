@@ -21,7 +21,14 @@
       <div
         class="profile-card__image-placeholder"
         aria-label="图片占位符"
-      ></div>
+      >
+        <img
+            v-if="ui.webSetting?.name_avatar"
+            :src="ui.webSetting.name_avatar"
+            :alt="ui.webSetting?.name || '博主'"
+            class="profile-card__avatar"
+          />
+      </div>
     </div>
 
     <div class="profile-card__stats" aria-label="博客统计">
