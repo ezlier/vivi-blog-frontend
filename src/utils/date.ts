@@ -9,7 +9,6 @@ export function formatAdminDateTime(
 
   const pad = (part: number) => String(part).padStart(2, "0");
   return [
-    `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`,
-    `${pad(date.getHours())}:${pad(date.getMinutes())}`,
+    `${date.getFullYear()}/${pad(date.getMonth() + 1)}/${pad(date.getDate())}`,
   ].join(" ");
 }
